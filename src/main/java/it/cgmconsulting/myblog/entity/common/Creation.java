@@ -1,0 +1,20 @@
+package it.cgmconsulting.myblog.entity.common;
+
+import org.hibernate.annotations.CreationTimestamp;
+
+import javax.persistence.Column;
+import javax.persistence.MappedSuperclass;
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+//nel monento in cui viene estesa
+// senza la trasposizione sul DB non avverrebbe
+@MappedSuperclass
+public class Creation implements Serializable {
+    // si valorizzano in automatico
+    @CreationTimestamp
+    // la data di creazione non può essere aggiornata
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
+}
