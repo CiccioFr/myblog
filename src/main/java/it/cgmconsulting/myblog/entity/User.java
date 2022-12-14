@@ -1,11 +1,13 @@
 package it.cgmconsulting.myblog.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.cgmconsulting.myblog.entity.common.CreationUpdate;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -24,6 +26,7 @@ public class User extends CreationUpdate {
     @Column(length = 20, nullable = false, unique = true)
     private String username;
 
+    @JsonIgnore
     @Column(nullable = false)
     private String password;
 
@@ -32,13 +35,14 @@ public class User extends CreationUpdate {
 
     private boolean enabled = false;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     // indico nome da attribuire alla Relazione
+    // creerebbe automatic la join, ci serve per assegnare nome a colonne
     @JoinTable(name = "users_authority",
         joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
         inverseJoinColumns = {@JoinColumn(name = "authority_id", referencedColumnName = "id")}
     )
-    Set<Authority> authorities;
+    Set<Authority> authorities = new HashSet();
 
     public User(String username, String password, String email) {
         this.username = username;
