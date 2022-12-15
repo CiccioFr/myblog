@@ -1,12 +1,13 @@
 package it.cgmconsulting.myblog.entity;
 
+import it.cgmconsulting.myblog.entity.common.CreationUpdate;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Check;
 
 import javax.persistence.*;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 //bisogna sapere la fuonzione del DBMS per calcolare la lunghezza del carattere
@@ -14,7 +15,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Post {
+public class Post extends CreationUpdate{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,9 +37,23 @@ public class Post {
 
     private boolean published = false;
 
-    @ManyToOne
+    // piu post possono essere scritti da un autore
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author", nullable = false)
     private User authot;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "post_categories",
+            joinColumns = {@JoinColumn(name = "post_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "category_name", referencedColumnName = "categoryName")}
+    )
+    Set<Category> categories = new HashSet();
+
+    // mappedBy = "post" nome tabella - mappiamo in riferimento alla tabella
+    // orphanRemoval = true - cancellazione in cascata dei commenti legati al post
+    // cascade = CascadeType.ALL -
+    @OneToMany(mappedBy = "post", orphanRemoval = true, cascade = CascadeType.ALL)
+    List<Comment> comments = new ArrayList();
 
     public Post(String title, String overview, String content, User authot) {
         this.title = title;
