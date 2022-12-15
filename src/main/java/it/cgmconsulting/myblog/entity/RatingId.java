@@ -28,7 +28,7 @@ public class RatingId implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
-    private User post;
+    private Post post;
 
     @Override
     public boolean equals(Object o) {

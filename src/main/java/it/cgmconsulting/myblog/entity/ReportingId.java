@@ -5,10 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Embeddable;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -19,7 +16,7 @@ import java.util.Objects;
 @AllArgsConstructor
 public class ReportingId implements Serializable {
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "comment_id")
     private Comment comment;
 
