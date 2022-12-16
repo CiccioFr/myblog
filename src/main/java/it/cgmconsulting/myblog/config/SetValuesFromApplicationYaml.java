@@ -11,6 +11,8 @@ public class SetValuesFromApplicationYaml {
     public static String JWT_SECRET;
     public static int JWT_EXPIRATION_IN_SECONDS;
 
+    // è un workArroun
+    //
     @Autowired
     public void getJwtProperties(
     		@Value("${spring.application.name}") String issuer,

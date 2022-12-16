@@ -6,6 +6,9 @@ import lombok.Setter;
 
 import java.util.Set;
 
+/**
+ * DTO
+ */
 @Setter @Getter @NoArgsConstructor
 public class JwtAuthenticationResponse {
 
@@ -21,6 +24,8 @@ public class JwtAuthenticationResponse {
 		this.username = username;
 		this.email = email;
 		this.authorities = authorities;
+		// il suffisso Bearer serve a Spring Security che tipo di schema viene usato
+		// è uno standard e quasi tutti usano questo
 		this.token = "Bearer "+token;
 	}
 }

@@ -14,6 +14,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * classe custon che implementa UserDetails di
+ */
 public class UserPrincipal implements UserDetails {
 	
 	private final long id;

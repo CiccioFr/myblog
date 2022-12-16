@@ -37,7 +37,8 @@ public class JwtTokenProvider {
         final Instant now = Instant.now();
         builder
         	.withIssuedAt(Date.from(now)) // iat: jwt creation date
-        	.withExpiresAt(Date.from(now.plus(SetValuesFromApplicationYaml.JWT_EXPIRATION_IN_SECONDS, ChronoUnit.SECONDS))); // exp: jwt expiration date
+        	.withExpiresAt(Date.from(now.plus(SetValuesFromApplicationYaml.JWT_EXPIRATION_IN_SECONDS,
+					ChronoUnit.SECONDS))); // exp: jwt expiration date
 
         if (payloadClaims.isEmpty()) {
             log.warn("You are building a JWT without header claims");

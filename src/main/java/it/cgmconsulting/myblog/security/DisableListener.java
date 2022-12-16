@@ -7,6 +7,10 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.security.authentication.event.AuthenticationFailureDisabledEvent;
 import org.springframework.stereotype.Component;
 
+/**
+ * Refuso
+ * Non serve in questa App
+ */
 @Slf4j
 @Component
 public class DisableListener implements ApplicationListener<AuthenticationFailureDisabledEvent> {

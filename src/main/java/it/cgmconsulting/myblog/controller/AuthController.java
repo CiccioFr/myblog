@@ -65,11 +65,15 @@ public class AuthController {
                         request.getPassword()
                 )
         );
-
+        // è un oggetto di Spring Security
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
+        // creazione del Token
         String jwt = JwtTokenProvider.generateToken(authentication);
-        JwtAuthenticationResponse currentUser = UserPrincipal.createJwtAuthenticationResponseFromUserPrincipal((UserPrincipal) authentication.getPrincipal(), jwt);
+        // creazione DTO
+        // sostanz è una mappatura tra ..
+        JwtAuthenticationResponse currentUser = UserPrincipal
+                .createJwtAuthenticationResponseFromUserPrincipal((UserPrincipal) authentication.getPrincipal(), jwt);
 
         return ResponseEntity.ok(currentUser);
     }
