@@ -26,31 +26,43 @@ import it.cgmconsulting.myblog.service.UserService;
 import java.util.Collections;
 import java.util.Optional;
 
-
+/**
+ * @RestController qusta classe serve per la creazione di servizi RESTfull
+ * @RequestMapping indica di porre
+ */
 @RestController
 @RequestMapping("auth") // localhost:{port}/auth/....
 public class AuthController {
 
-    @Autowired AuthenticationManager authenticationManager;
-    @Autowired UserService userService;
-    @Autowired AuthorityService authorityService;
-    @Autowired PasswordEncoder passwordEncoder;
-    @Autowired JwtTokenProvider tokenProvider;
+    @Autowired
+    AuthenticationManager authenticationManager;
+    @Autowired
+    UserService userService;
+    @Autowired
+    AuthorityService authorityService;
+    @Autowired
+    PasswordEncoder passwordEncoder;
+    @Autowired
+    JwtTokenProvider tokenProvider;
 
-
+    /**
+     * @valid è necessario a validare i dati
+     * @param request
+     * @return
+     */
     @PostMapping("signin")
     @Transactional
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody SigninRequest request) {
         Optional<User> u = userService.findByUsernameOrEmail(request.getUsernameOrEmail(), request.getUsernameOrEmail());
-        if(!u.isPresent())
+        if (!u.isPresent())
             return new ResponseEntity<String>("Bad Credentials", HttpStatus.FORBIDDEN);
-        if(!passwordEncoder.matches(request.getPassword(), u.get().getPassword()))
+        if (!passwordEncoder.matches(request.getPassword(), u.get().getPassword()))
             return new ResponseEntity<String>("Bad Credentials", HttpStatus.FORBIDDEN);
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                		request.getUsernameOrEmail(),
-                		request.getPassword()
+                        request.getUsernameOrEmail(),
+                        request.getPassword()
                 )
         );
 
@@ -62,14 +74,23 @@ public class AuthController {
         return ResponseEntity.ok(currentUser);
     }
 
-    @PostMapping("/signup")
+    /**
+     * ResponseEntity oggetto di Spring che ci permette di avere al suo interno 2 valori fondamenti nella response
+     * : il Body e HttpStatus
+     * body la lista di cio che realmente ci aspettiamo
+     * HttpStatus: il codice
+     *
+     * @param signUpRequest
+     * @return
+     */
+    @PutMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
 
-    	if(userService.existsByUsername(signUpRequest.getUsername())) {
+        if (userService.existsByUsername(signUpRequest.getUsername())) {
             return new ResponseEntity<String>("Username already in use", HttpStatus.BAD_REQUEST);
         }
 
-        if(userService.existsByEmail(signUpRequest.getEmail())) {
+        if (userService.existsByEmail(signUpRequest.getEmail())) {
             return new ResponseEntity<String>("Email Address already in use!", HttpStatus.BAD_REQUEST);
         }
 
@@ -78,10 +99,11 @@ public class AuthController {
 
         // Creating user's account
         User user = new User(
-    		signUpRequest.getUsername(),
-            signUpRequest.getEmail().toLowerCase(),
-            passwordEncoder.encode(signUpRequest.getPassword()),
-            Collections.singleton(authority.get()) // transform object Authority into Set<Authority>
+                signUpRequest.getUsername().trim(),
+                signUpRequest.getEmail().toLowerCase().trim(),
+                passwordEncoder.encode(signUpRequest.getPassword().trim()),
+                // uso get() per estrarre da Optional il ruolo
+                Collections.singleton(authority.get()) // transforms object Authority into Set<Authority>
         );
 
         userService.save(user);
