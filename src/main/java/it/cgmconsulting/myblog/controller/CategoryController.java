@@ -1,7 +1,7 @@
 package it.cgmconsulting.myblog.controller;
 
 import it.cgmconsulting.myblog.entity.Category;
-import it.cgmconsulting.myblog.service.CategoriService;
+import it.cgmconsulting.myblog.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +20,7 @@ public class CategoryController {
 
     // evita di dichiarare ed inizializzare un oggetto, lo rendo già disponibile con tutti i suoi metodi
     @Autowired
-    CategoriService categoryService;
+    CategoryService categoryService;
 
     @PutMapping("/{category}") // memoriziamo una risorsa sul server
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_WRITER')")
