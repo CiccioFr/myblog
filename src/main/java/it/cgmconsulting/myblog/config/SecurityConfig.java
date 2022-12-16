@@ -52,7 +52,9 @@ public class SecurityConfig {
                 "/**/*.png", "/**/*.gif", "/**/*.svg", "/**/*.jpg",
                 "/**/*.html", "/**/*.css", "/**/*.js")
                 .permitAll()
-            .antMatchers("/auth/**", "/{pathvariable:[0-9A-Za-z]+}/auth/**", "/public/**", "/{pathvariable:[0-9A-Za-z]+}/public/**", "/swagger-ui/**", "/v3/api-docs/**", "/actuator/**")
+            .antMatchers("/auth/**", "/{pathvariable:[0-9A-Za-z]+}/auth/**", "/public/**",
+                    "/{pathvariable:[0-9A-Za-z]+}/public/**", "/swagger-ui/**", "/v3/api-docs/**",
+                    "/actuator/**")
                 .permitAll()
             .anyRequest()
                 .authenticated();
