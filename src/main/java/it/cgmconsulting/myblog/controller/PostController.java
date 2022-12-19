@@ -44,6 +44,7 @@ public class PostController {
         Post p = new Post(request.getTitle(), request.getOverview(), request.getContent(), new User(userPrincipal.getId()));
         postService.save(p);
 
-        return new ResponseEntity<Post>(p, HttpStatus.CREATED);
+        //return new ResponseEntity<Post>(p, HttpStatus.CREATED);
+        return new ResponseEntity<String>("Nuovo Post creato ["+p.getId()+"]", HttpStatus.CREATED);
     }
 }
