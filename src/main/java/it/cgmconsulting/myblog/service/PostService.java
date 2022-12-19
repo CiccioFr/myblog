@@ -1,2 +1,22 @@
-package it.cgmconsulting.myblog.service;public class PostService {
+package it.cgmconsulting.myblog.service;
+
+import it.cgmconsulting.myblog.entity.Post;
+import it.cgmconsulting.myblog.repository.PostRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class PostService {
+
+    // qua iniettamo ilnostro repository
+    @Autowired
+    PostRepository postRepository;
+
+    public void save(Post p){
+        postRepository.save(p);
+    }
+
+    public boolean existsByTitle(String title){
+        return postRepository.existsByTitle(title);
+    }
 }

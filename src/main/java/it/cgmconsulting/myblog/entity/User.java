@@ -43,6 +43,10 @@ public class User extends CreationUpdate {
     )
     Set<Authority> authorities = new HashSet();
 
+    public User(Long id) {
+        this.id = id;
+    }
+
     public User(String username, String password, String email) {
         this.username = username;
         this.password = password;

@@ -11,6 +11,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 @Target({ElementType.PARAMETER, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
+// fa parte del core security e restituisce il principal (l'utente che si è loggato
+// recuperandolo da
 @AuthenticationPrincipal
 /**
  * Annotation that is used to resolve {@link Authentication#getPrincipal()} to a method. Provides core user information.
