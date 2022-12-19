@@ -20,3 +20,25 @@
   ---
   8. dto - Data Transfer Object
   9. dao - Data Access Object 
+10. 
+---
+la scatola più interna 
+1. entità
+2. repository - interpreta
+
+
+4. controller - richiama i metodi nel Service
+   - nel controller eseguo un controllo sul valore
+   - una sorta di riassunto
+category chiama repository
+- se qualcosa va male, vediamo i log a partire dalla scatola più esterna (controller)
+  - il log più utile è l'ultimo log (il la scatola più interna)
+
+
+al token 2 cose devo fare
+- se è valido (corrotto / se riesco a leggerlo) -> è malformed
+- verifico se scaduto
+- se utente nel frattempo non è stato disabilitato
+
+## il logger si può mettere nello yaml 
+- ma indica il livello del log
