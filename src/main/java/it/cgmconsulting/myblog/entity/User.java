@@ -12,7 +12,6 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
-// Lombok aiuta con
 @Getter
 @Setter
 @NoArgsConstructor

@@ -18,7 +18,7 @@ import it.cgmconsulting.myblog.security.JwtAuthenticationFilter;
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
- 
+
 	@Autowired CustomUserDetailsService customUserDetailsService;
     @Autowired private JwtAuthenticationEntryPoint unauthorizedHandler;
 
@@ -26,7 +26,7 @@ public class SecurityConfig {
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
         return new JwtAuthenticationFilter();
     }
-    
+
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
     	return authenticationConfiguration.getAuthenticationManager();
@@ -34,7 +34,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-     
+
     	http
         .cors()
             .and()
@@ -53,12 +53,12 @@ public class SecurityConfig {
                 "/**/*.html", "/**/*.css", "/**/*.js")
                 .permitAll()
             .antMatchers("/auth/**", "/{pathvariable:[0-9A-Za-z]+}/auth/**", "/public/**",
-                    "/{pathvariable:[0-9A-Za-z]+}/public/**", "/swagger-ui/**", "/v3/api-docs/**",
-                    "/actuator/**")
+                "/{pathvariable:[0-9A-Za-z]+}/public/**", "/swagger-ui/**", "/v3/api-docs/**",
+                "/actuator/**")
                 .permitAll()
             .anyRequest()
                 .authenticated();
- 
+
     	// Add our custom JWT security filter
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
@@ -66,5 +66,5 @@ public class SecurityConfig {
     }
 
 
-  
+
 }

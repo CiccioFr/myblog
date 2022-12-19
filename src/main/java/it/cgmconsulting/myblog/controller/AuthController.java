@@ -46,7 +46,8 @@ public class AuthController {
     JwtTokenProvider tokenProvider;
 
     /**
-     * @valid è necessario a validare i dati
+     *
+     * @valid Necessario: valida i dati
      * @param request
      * @return
      */
@@ -88,6 +89,8 @@ public class AuthController {
      * @return
      */
     @PutMapping("/signup")
+    // permette di non avere salvataggi monchi sul DB
+    @Transactional
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
 
         if (userService.existsByUsername(signUpRequest.getUsername())) {
@@ -110,6 +113,7 @@ public class AuthController {
                 Collections.singleton(authority.get()) // transforms object Authority into Set<Authority>
         );
 
+        // con @Transactional usiamo il Metodo save quando creiamo un nuovo oggetto da persistere sul DB
         userService.save(user);
 
         return new ResponseEntity<User>(user, HttpStatus.CREATED);
