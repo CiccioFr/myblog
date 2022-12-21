@@ -21,9 +21,9 @@ import java.util.Optional;
 @Validated
 public class CategoryController {
 
+    // injection
     // evita di inizializzare un oggetto, è così disponibile con tutti i suoi metodi
-    @Autowired
-    CategoryService categoryService;
+    @Autowired CategoryService categoryService;
 
     /**
      * Crea una Categoria
@@ -102,6 +102,6 @@ public class CategoryController {
     @GetMapping("/public/sql")
     public ResponseEntity<?> getCategoriesSQL() {
         List<Category> categories = categoryService.getCategoryByVisibleTrueSQL();
-        return new ResponseEntity<List<CategoryResponse>>(categories, HttpStatus.OK);
+        return new ResponseEntity<List<Category>>(categories, HttpStatus.OK);
     }
 }
