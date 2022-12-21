@@ -6,7 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * la usiamo quando il risultato restituisce una parte dei campi (un sottoinsieme di tabella)
+ * la usiamo quando il risultato restituisce una parte dei campi
+ * (un sottoinsieme di tabella)
  */
 @Getter
 @Setter

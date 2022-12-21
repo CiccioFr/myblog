@@ -13,11 +13,12 @@ public interface CategoryRepository extends JpaRepository<Category, String> {
     List<Category> findByVisibleTrue();
 
     // JPQL: JavaPersistent Query Language - nome del tutto arbitrario
-    // @Query per immettere una query usando la sintassi jpql - fa riferimento a nome delle classi ed attributi
+    // @Query per immettere una query usando la sintassi jpql
+    // - fa riferimento a nome delle classi ed attributi
     @Query(value = "SELECT c.categoryName FROM Category c WHERE c.visible=true ORDER BY c.categoryName")
     List<String> getByVisibleTrue();
 
-    // fare una SELECT su più attributi: fare una classe custom in response
+    // Per fare una SELECT su più attributi: fare una classe custom in response
     // (usato per generare il Json per response: key -> suoi attributi)
     // in SELECT serve un nuovo oggetto basato su CategoryResponse che prende i dati dall'Entity Category
     // i dati: tipi ed ordine nella query devono corrispondere agli attributi di CategoryResponse

@@ -8,15 +8,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class PostService {
 
-    // qua iniettamo ilnostro repository
+    // @Autowired - iniettiamo il repository
     @Autowired
     PostRepository postRepository;
 
-    public void save(Post p){
+    public void save(Post p) {
         postRepository.save(p);
     }
 
-    public boolean existsByTitle(String title){
+    public boolean existsByTitle(String title) {
         return postRepository.existsByTitle(title);
     }
 }
