@@ -10,7 +10,7 @@ import javax.persistence.*;
 import java.util.*;
 
 @Entity
-//bisogna sapere la fuonzione del DBMS per calcolare la lunghezza del carattere
+//bisogna sapere la funzione del DBMS per calcolare la lunghezza del carattere
 //@Check(constraints = "LENGTH(title) > 10")
 @Getter
 @Setter
@@ -28,7 +28,7 @@ public class Post extends CreationUpdate{
     private String overview;
 
     // di default userebbe VARCHAR (255)
-    // impostare a 64k la dimensione, essento su DB un text)
+    // impostare a 64k la dimensione, essendo su DB di tipo "text")
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
@@ -47,13 +47,13 @@ public class Post extends CreationUpdate{
             joinColumns = {@JoinColumn(name = "post_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "category_name", referencedColumnName = "categoryName")}
     )
-    Set<Category> categories = new HashSet();
+    Set<Category> categories = new HashSet<>();
 
     // mappedBy = "post" nome tabella - mappiamo in riferimento alla tabella
     // orphanRemoval = true - cancellazione in cascata dei commenti legati al post
     // cascade = CascadeType.ALL -
     @OneToMany(mappedBy = "post", orphanRemoval = true, cascade = CascadeType.ALL)
-    List<Comment> comments = new ArrayList();
+    List<Comment> comments = new ArrayList<>();
 
     public Post(String title, String overview, String content, User authot) {
         this.title = title;

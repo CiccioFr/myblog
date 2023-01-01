@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-/* - by Mattia - per bypassaree tutte le sicurezze, anche password
+/* - by Mattia - per bypassare tutte le sicurezze, anche password
 	@SpringBootApplication(exclude = {SecurityAutoConfiguration.class}) */
 @SpringBootApplication
 public class MyblogApplication {
