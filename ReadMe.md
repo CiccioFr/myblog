@@ -1,23 +1,45 @@
 # Prog. MyBlog
 
-## Inizializzato da [Spring Initializr](https://start.spring.io/)
+<details><summary>1. Progettazione del DB</summary>
 
-## Dipendenze:
-    1. `spring web`
-    2. `spring data jpa`
-    3. `mysql Driver`
-    4. `lombok`
-    5. `validation`
+Class Diagramm
+![bs](./asset/myblog.jpg)
+</details>
 
-## Struttura
-- controller
-- entity
-- payload
-  - request
-  - response
-- repository
-- service
+Il Progetto prevede l'utilizzo di:
+- Spring Web
+- JPA
+- Hibenate
+- Lombok (Libreria (APT) durante la compilazione interpreta le annotation dichiarate a livello di classe)
+- d
 
+### Inizializzato da [Spring Initializr](https://start.spring.io/)
+
+### Dipendenze:
+1. `spring web`
+2. `spring data jpa`
+3. `mysql Driver`
+4. `lombok`
+5. `validation`
+
+### Struttura Progetto
+java
+- it.cgmconsulting.myblog
+  - config
+  - controller
+  - entity
+    - common
+  - exception
+  - payload
+    - request
+    - response - (DTO)
+  - repository - (DAO)
+  - security
+  - service
+- resources
+  - application.yaml
+  - sata.sql
+  - logback.xml
 ---
   8. dto - Data Transfer Object
   9. dao - Data Access Object 
@@ -26,12 +48,12 @@
 la scatola più interna 
 1. Entity
 2. Repository | Response
-  - Response: per query personalizzate anche con join
-    - usare JPQL oppure l’SQL nativo per effettuare le query.
-  - Repository: per interrogare il DB con query classiche
+   - Repository: per interrogare il DB con query classiche
+   - Response: per query personalizzate anche con join
+     - usare JPQL oppure l’SQL nativo per effettuare le query.
 3. Service
-  - logica di business
-    - trattare il risultato delle query create nel repository
+   - logica di business
+     - trattare il risultato delle query create nel repository
 4. Controller - richiama i metodi nel Service
    - nel controller eseguo un controllo sul valore
    - una sorta di riassunto
@@ -43,8 +65,7 @@ la scatola più interna
 
 al token 2 cose devo fare
 - se è valido (corrotto / se riesco a leggerlo) -> è malformed
-- verifico se scaduto
-- se utente nel frattempo non è stato disabilitato
+- verifico se scaduto (se utente nel frattempo è stato disabilitato)
 
 ## il logger si può mettere nello yaml 
 - ma indica il livello del log
