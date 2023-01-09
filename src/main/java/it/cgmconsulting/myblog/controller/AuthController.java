@@ -21,14 +21,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
-import java.util.Collections;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import javax.validation.constraints.NotBlank;
+import java.util.*;
 
 /**
  * @RestController qusta classe serve per la creazione di servizi RESTfull
@@ -36,6 +35,7 @@ import java.util.UUID;
  */
 @RestController
 @RequestMapping("auth") // localhost:{port}/auth/....
+@Validated
 public class AuthController {
 
     @Autowired
@@ -156,6 +156,28 @@ public class AuthController {
         u.get().setAuthorities(authorities);
 
         return new ResponseEntity<String>("Authorities have been update", HttpStatus.OK);
+    }
+
+    @PatchMapping("confirm/{confirmCode}") // es.: localhost:8083/auth/confirm/3dn3f-3g5g3g35g-g3g35g-g3g3-g35ffsgr
+    @Transactional
+    public ResponseEntity<?> registrationConfirm(@PathVariable @NotBlank String confirmCode) {
+
+        Optional<User> u = userService.findByConfirmCode(confirmCode);
+        if(u.isEmpty())
+            return new ResponseEntity<String>("User not found or..", HttpStatus.NOT_FOUND);
+
+        u.get().setEnabled(true);
+        u.get().setConfirmCode(null);
+
+        Optional<Authority> authority = authorityService.findByAuthorityName("ROLE_READER");
+        if (u.isEmpty())
+            return new ResponseEntity<String>("Authority not Found", HttpStatus.NOT_FOUND);
+        // Set<Authority> as = new HashSet<>();
+        // as.add(authority.get());
+        // ma meglio ridurre tutto ad una riga
+        u.get().setAuthorities(Collections.singleton(authority.get()));
+
+        return new ResponseEntity<String>("Your registration has been confirmed, please login", HttpStatus.OK);
     }
 }
 

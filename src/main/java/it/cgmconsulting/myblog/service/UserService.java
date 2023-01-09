@@ -42,4 +42,7 @@ public class UserService {
         return userRepository.findByUsernameOrEmail(username, email);
     }
 
+    public Optional<User> findByConfirmCode(String confirmCode) {
+        return userRepository.findByConfirmCode(confirmCode);
+    }
 }

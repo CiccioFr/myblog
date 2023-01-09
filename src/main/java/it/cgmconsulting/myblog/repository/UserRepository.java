@@ -15,8 +15,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByIdAndEnabledTrue(long id);
 
+    Optional<User> findByConfirmCode(String confirmCode);
+
     Optional<User> findByUsernameOrEmail(String username, String email);
     //Optional<User> findByUsernameOrEmailx(String username, String email);
+
+    // Optional<User> findByUsernameAndDobBet......(String username, String email);
+    //
 
     // risultato della query restituisce un qualcosa che no è mai un null
     Optional<User> findByUsername(String username);
