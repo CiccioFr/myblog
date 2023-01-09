@@ -2,6 +2,7 @@ package it.cgmconsulting.myblog.controller;
 
 import it.cgmconsulting.myblog.entity.Authority;
 import it.cgmconsulting.myblog.entity.User;
+import it.cgmconsulting.myblog.mail.MailService;
 import it.cgmconsulting.myblog.payload.request.SigninRequest;
 import it.cgmconsulting.myblog.payload.request.SignupRequest;
 import it.cgmconsulting.myblog.payload.request.UpdateUserAuthority;
@@ -27,6 +28,7 @@ import javax.validation.Valid;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * @RestController qusta classe serve per la creazione di servizi RESTfull
@@ -46,6 +48,8 @@ public class AuthController {
     PasswordEncoder passwordEncoder;
     @Autowired
     JwtTokenProvider tokenProvider;
+    @Autowired
+    MailService mailService;
 
     /**
      * @param request
@@ -105,17 +109,24 @@ public class AuthController {
         // find default valid authority
         Optional<Authority> authority = authorityService.findByAuthorityName("ROLE_GUEST");
 
+        // genera un codice alfanumerico univoco
+        String confirmCode = UUID.randomUUID().toString();
         // Creating user's account
         User user = new User(
                 signUpRequest.getUsername().trim(),
                 signUpRequest.getEmail().toLowerCase().trim(),
                 passwordEncoder.encode(signUpRequest.getPassword().trim()),
-                // uso get() per estrarre da Optional il ruolo
-                Collections.singleton(authority.get()) // transforms object Authority into Set<Authority>
+                // .get() per estrarre da Optional il ruolo
+                Collections.singleton(authority.get()), // transforms object Authority into Set<Authority>
+                confirmCode
         );
 
         // con @Transactional usiamo il Metodo save quando creiamo un nuovo oggetto da persistere sul DB
         userService.save(user);
+        // fatta la persistenza, invio la mail
+        // invio confirm code
+        mailService.sendMail(mailService.createMail(user, "Myblog - Confirm code",
+                "In order to confirm your registration, please click this link http://localhost:8083/auth/confirm/" + confirmCode, ""));
 
         return new ResponseEntity<User>(user, HttpStatus.CREATED);
     }
@@ -131,15 +142,15 @@ public class AuthController {
     public ResponseEntity<?> updateAuthority(@RequestBody @Valid UpdateUserAuthority request, @CurrentUser UserPrincipal userPrincipal) {
 
         // Evito che l'Admin si cambi le autorizzazioni
-        if(request.getUserId() == userPrincipal.getId())
+        if (request.getUserId() == userPrincipal.getId())
             return new ResponseEntity<String>("You cannot update your own authority", HttpStatus.FORBIDDEN);
 
-        Optional<User> u =userService.findByIdAndEnabledTrue(request.getUserId());
-        if(u.isEmpty())
+        Optional<User> u = userService.findByIdAndEnabledTrue(request.getUserId());
+        if (u.isEmpty())
             return new ResponseEntity<String>("User not found or not enbled", HttpStatus.NOT_FOUND);
 
         Set<Authority> authorities = authorityService.findByAuthorityNameIn(request.getAuthorities());
-        if(authorities.isEmpty())
+        if (authorities.isEmpty())
             return new ResponseEntity<String>("Authorities not found", HttpStatus.NOT_FOUND);
 
         u.get().setAuthorities(authorities);

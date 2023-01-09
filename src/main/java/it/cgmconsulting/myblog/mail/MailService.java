@@ -24,6 +24,7 @@ public class MailService {
 
     @Autowired JavaMailSender javaMailSender;
 
+    // per far si che funzioni, nel main inserire @EnableAsync
     @Async
     public void sendMail(Mail mail) {
 

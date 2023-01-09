@@ -34,6 +34,9 @@ public class User extends CreationUpdate {
 
     private boolean enabled = false;
 
+    // aggiunta per la mail, usata per mascherare gli attributi sensibili
+    private String confirmCode;
+
     @ManyToMany(fetch = FetchType.EAGER)
     // indico nome da attribuire alla Relazione
     // creerebbe automatic la join, ci serve per assegnare nome a colonne
@@ -65,6 +68,14 @@ public class User extends CreationUpdate {
         this.email = email;
         this.password = password;
         this.authorities = authorities;
+    }
+
+    public User(String username, String email, String password, Set<Authority> authorities, String configCode) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.authorities = authorities;
+        this.confirmCode = configCode;
     }
 
     @Override
