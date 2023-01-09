@@ -13,9 +13,12 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 @Service
+// permette di utilizzare il log per stamapre meggi di console, invece del solito, con questa ho già una variabile log
 @Slf4j
 public class MailService {
 
+    // QUELLO DI SPRING e non diLombok
+    // la mail (di app) che risulterà come mittente
     @Value("${app.mail.sender")
     private String from;
 
