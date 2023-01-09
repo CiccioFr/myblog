@@ -12,14 +12,15 @@ import org.springframework.stereotype.Service;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
+// permette di utilizzare il log per stampare messaggi di console, invece del solito, con questa ho già una variabile log
+// Logger logger = LoggerFactory.getLogger(MailService.class);
 @Service
-// permette di utilizzare il log per stamapre meggi di console, invece del solito, con questa ho già una variabile log
 @Slf4j
 public class MailService {
 
     // QUELLO DI SPRING e non diLombok
     // la mail (di app) che risulterà come mittente
-    @Value("${app.mail.sender")
+    @Value("${app.mail.sender}")
     private String from;
 
     @Autowired JavaMailSender javaMailSender;

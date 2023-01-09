@@ -9,6 +9,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 /* - by Mattia - per bypassare tutte le sicurezze, anche password
 	@SpringBootApplication(exclude = {SecurityAutoConfiguration.class}) */
+
+
 @SpringBootApplication
 @EnableAsync
 public class MyblogApplication {

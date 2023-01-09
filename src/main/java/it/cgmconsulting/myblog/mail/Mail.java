@@ -9,6 +9,6 @@ public class Mail {
     private String mailTo;
     private String mailSubject;
     private String mailContent;
-    // html/txt contenuto sia html che testo semplice
+// html/txt contenuto sia html che testo semplice
     private String mailMimeType;
 }
