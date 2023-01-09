@@ -1,11 +1,19 @@
 package it.cgmconsulting.myblog.controller;
 
-import javax.transaction.Transactional;
-import javax.validation.Valid;
-
+import it.cgmconsulting.myblog.entity.Authority;
+import it.cgmconsulting.myblog.entity.User;
+import it.cgmconsulting.myblog.payload.request.SigninRequest;
+import it.cgmconsulting.myblog.payload.request.SignupRequest;
+import it.cgmconsulting.myblog.payload.request.UpdateUserAuthority;
+import it.cgmconsulting.myblog.payload.response.JwtAuthenticationResponse;
+import it.cgmconsulting.myblog.security.JwtTokenProvider;
+import it.cgmconsulting.myblog.security.UserPrincipal;
+import it.cgmconsulting.myblog.service.AuthorityService;
+import it.cgmconsulting.myblog.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -13,18 +21,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import it.cgmconsulting.myblog.entity.Authority;
-import it.cgmconsulting.myblog.entity.User;
-import it.cgmconsulting.myblog.payload.request.SigninRequest;
-import it.cgmconsulting.myblog.payload.request.SignupRequest;
-import it.cgmconsulting.myblog.payload.response.JwtAuthenticationResponse;
-import it.cgmconsulting.myblog.security.JwtTokenProvider;
-import it.cgmconsulting.myblog.security.UserPrincipal;
-import it.cgmconsulting.myblog.service.AuthorityService;
-import it.cgmconsulting.myblog.service.UserService;
-
+import javax.transaction.Transactional;
+import javax.validation.Valid;
 import java.util.Collections;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * @RestController qusta classe serve per la creazione di servizi RESTfull
@@ -46,10 +47,9 @@ public class AuthController {
     JwtTokenProvider tokenProvider;
 
     /**
-     *
-     * @valid Necessario: valida i dati
      * @param request
      * @return
+     * @valid Necessario: valida i dati
      */
     @PostMapping("signin")
     @Transactional
@@ -119,6 +119,27 @@ public class AuthController {
         return new ResponseEntity<User>(user, HttpStatus.CREATED);
     }
 
+    /**
+     * modifica del ruolo
+     */
+    //@PatchMapping("/{userId}")  // localhost:{port}/auth/4/ROLE_EDITOR,ROLE_MODERATOR // conviene creare classe di request
+    //public ResponseEntity<?> updateAuthority(@PathVariable long userId){
+    @PatchMapping()  // localhost:{port}/auth/4/ROLE_EDITOR,ROLE_MODERATOR
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Transactional
+    public ResponseEntity<?> updateAuthority(@RequestBody @Valid UpdateUserAuthority request) {
 
+        Optional<User> u =userService.findByIdAndEnabledTrue(request.getUserId());
+        if(u.isEmpty())
+            return new ResponseEntity<String>("User not found or not enbled", HttpStatus.NOT_FOUND);
+
+        Set<Authority> authorities = authorityService.findByAuthorityNameIn(request.getAuthorities());
+        if(authorities.isEmpty())
+            return new ResponseEntity<String>("Authorities not found", HttpStatus.NOT_FOUND);
+
+        u.get().setAuthorities(authorities);
+
+        return new ResponseEntity<String>("Authorities have been update", HttpStatus.OK);
+    }
 }
 

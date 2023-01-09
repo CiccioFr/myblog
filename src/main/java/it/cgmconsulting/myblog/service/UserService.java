@@ -30,6 +30,10 @@ public class UserService {
         return userRepository.findById(id);
     }
 
+    public Optional<User> findByIdAndEnabledTrue(long id) {
+        return userRepository.findByIdAndEnabledTrue(id);
+    }
+
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
     }

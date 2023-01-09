@@ -17,7 +17,7 @@ public interface AuthorityRepository extends JpaRepository<Authority , Long>{
 
 	Set<Authority> findByIdIn(Set<Long> ids);
 
-
+	Set<Authority> findByAuthorityNameIn(Set<String> authorities); // select * from authority where authority_name IN (string1, string2, ...)
 
 
 }

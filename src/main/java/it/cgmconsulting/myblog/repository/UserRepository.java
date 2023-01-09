@@ -8,9 +8,12 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
+    // METODI DERIVATI: restituiscono SOLO entità o collection di entità, oppure primitivi/wrapper
 
-    // uso di yaml   data.jpa.repositories.bootstrap-mode: DEFAULT | DEFERRED | LAZY
+    // uso di yaml  data.jpa.repositories.bootstrap-mode: DEFAULT | DEFERRED | LAZY
     Optional<User> findByEmail(String email);
+
+    Optional<User> findByIdAndEnabledTrue(long id);
 
     Optional<User> findByUsernameOrEmail(String username, String email);
     //Optional<User> findByUsernameOrEmailx(String username, String email);
