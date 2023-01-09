@@ -6,6 +6,7 @@ import it.cgmconsulting.myblog.payload.request.SigninRequest;
 import it.cgmconsulting.myblog.payload.request.SignupRequest;
 import it.cgmconsulting.myblog.payload.request.UpdateUserAuthority;
 import it.cgmconsulting.myblog.payload.response.JwtAuthenticationResponse;
+import it.cgmconsulting.myblog.security.CurrentUser;
 import it.cgmconsulting.myblog.security.JwtTokenProvider;
 import it.cgmconsulting.myblog.security.UserPrincipal;
 import it.cgmconsulting.myblog.service.AuthorityService;
@@ -127,7 +128,11 @@ public class AuthController {
     @PatchMapping()  // localhost:{port}/auth/4/ROLE_EDITOR,ROLE_MODERATOR
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Transactional
-    public ResponseEntity<?> updateAuthority(@RequestBody @Valid UpdateUserAuthority request) {
+    public ResponseEntity<?> updateAuthority(@RequestBody @Valid UpdateUserAuthority request, @CurrentUser UserPrincipal userPrincipal) {
+
+        // Evito che l'Admin si cambi le autorizzazioni
+        if(request.getUserId() == userPrincipal.getId())
+            return new ResponseEntity<String>("You cannot update your own authority", HttpStatus.FORBIDDEN);
 
         Optional<User> u =userService.findByIdAndEnabledTrue(request.getUserId());
         if(u.isEmpty())
