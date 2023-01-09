@@ -37,6 +37,10 @@ public class User extends CreationUpdate {
     // aggiunta per la mail, usata per mascherare gli attributi sensibili
     private String confirmCode;
 
+    @OneToOne
+    @JoinColumn(name = "avatar")
+    private Avatar avatar;
+
     @ManyToMany(fetch = FetchType.EAGER)
     // indico nome da attribuire alla Relazione
     // creerebbe automatic la join, ci serve per assegnare nome a colonne
