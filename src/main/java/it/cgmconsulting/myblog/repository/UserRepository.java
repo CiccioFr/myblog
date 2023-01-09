@@ -20,8 +20,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUsernameOrEmail(String username, String email);
     //Optional<User> findByUsernameOrEmailx(String username, String email);
 
-    // Optional<User> findByUsernameAndDobBet......(String username, String email);
-    //
+    // Optional<User> findByUsernameAndDobBetweenAndEnabledTrue(String username, LocalDate start, LocalDate end);
+    // select * from user where username='pippo' AND (dob between '2000-01-01' and '2022-12-31') and enabled=1
 
     // risultato della query restituisce un qualcosa che no è mai un null
     Optional<User> findByUsername(String username);

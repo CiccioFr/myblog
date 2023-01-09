@@ -27,7 +27,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import java.util.*;
+import java.util.Collections;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * @RestController qusta classe serve per la creazione di servizi RESTfull
@@ -110,6 +113,7 @@ public class AuthController {
         Optional<Authority> authority = authorityService.findByAuthorityName("ROLE_GUEST");
 
         // genera un codice alfanumerico univoco
+        // Creating user's account // User user = new User();
         String confirmCode = UUID.randomUUID().toString();
         // Creating user's account
         User user = new User(
@@ -126,7 +130,8 @@ public class AuthController {
         // fatta la persistenza, invio la mail
         // invio confirm code
         mailService.sendMail(mailService.createMail(user, "Myblog - Confirm code",
-                "In order to confirm your registration, please click this link http://localhost:8083/auth/confirm/" + confirmCode, ""));
+                "In order to confirm your registration, please click this link http://localhost:8083/auth/confirm/"
+                        + confirmCode, ""));
 
         return new ResponseEntity<User>(user, HttpStatus.CREATED);
     }
@@ -142,6 +147,7 @@ public class AuthController {
     public ResponseEntity<?> updateAuthority(@RequestBody @Valid UpdateUserAuthority request, @CurrentUser UserPrincipal userPrincipal) {
 
         // Evito che l'Admin si cambi le autorizzazioni
+        // Un utente avente il ruolo di ADMIN  non può modificare i ruoli su se stesso.
         if (request.getUserId() == userPrincipal.getId())
             return new ResponseEntity<String>("You cannot update your own authority", HttpStatus.FORBIDDEN);
 
@@ -163,7 +169,7 @@ public class AuthController {
     public ResponseEntity<?> registrationConfirm(@PathVariable @NotBlank String confirmCode) {
 
         Optional<User> u = userService.findByConfirmCode(confirmCode);
-        if(u.isEmpty())
+        if (u.isEmpty())
             return new ResponseEntity<String>("User not found or..", HttpStatus.NOT_FOUND);
 
         u.get().setEnabled(true);

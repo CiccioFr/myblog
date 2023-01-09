@@ -18,7 +18,7 @@ public class Avatar {
     @Column(nullable = false)
     private String filename;
 
-    // il mime tipe associato (NON L'ESTENSIONE) al file es.: "image/jpg", "image/gif", "image/png"
+    // mime type associato (NON L'ESTENSIONE) al file es.: "image/jpg", "image/gif", "image/png"
     @Column(nullable = false)
     private String filetype;
 

@@ -8,7 +8,8 @@ import lombok.Getter;
 @Getter
 public class SigninRequest {
 	
-    @NotBlank @Size(min=5)
+    @NotBlank
+    @Size(min=5)
     private String usernameOrEmail;
 
     @NotBlank
