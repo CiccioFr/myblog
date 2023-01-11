@@ -59,7 +59,7 @@ public class AuthController {
      * @return
      * @valid Necessario: valida i dati
      */
-    @PostMapping("signin")
+    @PostMapping("signin") // localhost:{port}/auth/signin
     @Transactional
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody SigninRequest request) {
         Optional<User> u = userService.findByUsernameOrEmail(request.getUsernameOrEmail(), request.getUsernameOrEmail());
@@ -131,13 +131,17 @@ public class AuthController {
         // invio confirm code
         mailService.sendMail(mailService.createMail(user, "Myblog - Confirm code",
                 "In order to confirm your registration, please click this link http://localhost:8083/auth/confirm/"
-                        + confirmCode, ""));
+                        + confirmCode, "  <- Click"));
 
         return new ResponseEntity<User>(user, HttpStatus.CREATED);
     }
 
     /**
      * modifica del ruolo
+     *
+     * @param request composta da userId e Set<String> authorities
+     * @param userPrincipal
+     * @return
      */
     //@PatchMapping("/{userId}")  // localhost:{port}/auth/4/ROLE_EDITOR,ROLE_MODERATOR // conviene creare classe di request
     //public ResponseEntity<?> updateAuthority(@PathVariable long userId){
@@ -164,6 +168,11 @@ public class AuthController {
         return new ResponseEntity<String>("Authorities have been update", HttpStatus.OK);
     }
 
+    /**
+     *
+     * @param confirmCode
+     * @return
+     */
     @PatchMapping("confirm/{confirmCode}") // es.: localhost:8083/auth/confirm/3dn3f-3g5g3g35g-g3g35g-g3g3-g35ffsgr
     @Transactional
     public ResponseEntity<?> registrationConfirm(@PathVariable @NotBlank String confirmCode) {
