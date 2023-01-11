@@ -19,7 +19,7 @@ import javax.mail.internet.MimeMessage;
 public class MailService {
 
     // QUELLO DI SPRING e non diLombok
-    // la mail (di app) che risulterà come mittente
+    // la mail (di app) risulterà come mittente
     @Value("${app.mail.sender}")
     private String from;
 
