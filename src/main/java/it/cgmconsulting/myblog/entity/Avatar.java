@@ -28,6 +28,12 @@ public class Avatar {
     @Lob
     private byte[] data;
 
+    public Avatar(String filename, String filetype, byte[] data) {
+        this.filename = filename;
+        this.filetype = filetype;
+        this.data = data;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

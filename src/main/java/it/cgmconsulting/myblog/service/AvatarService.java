@@ -4,6 +4,9 @@ import it.cgmconsulting.myblog.entity.Avatar;
 import it.cgmconsulting.myblog.repository.AvatarRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @Service
 public class AvatarService {
@@ -15,7 +18,13 @@ public class AvatarService {
         avatarRepository.save(avatar);
     }
 
-    public void delete(Avatar avatar){
+    public void delete(Avatar avatar) {
         avatarRepository.delete(avatar);
+    }
+
+    // check delle dimensioni
+    public Avatar fromMultipartFileToAvatar(MultipartFile file) throws IOException {
+        Avatar avatar = new Avatar(file.getOriginalFilename(), file.getContentType(), file.getBytes());
+        return avatar;
     }
 }

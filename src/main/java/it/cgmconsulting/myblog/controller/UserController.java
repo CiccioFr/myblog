@@ -1,23 +1,30 @@
 package it.cgmconsulting.myblog.controller;
 
+import it.cgmconsulting.myblog.entity.Avatar;
 import it.cgmconsulting.myblog.entity.User;
 import it.cgmconsulting.myblog.mail.MailService;
 import it.cgmconsulting.myblog.payload.request.UpdateUserProfile;
 import it.cgmconsulting.myblog.security.CurrentUser;
 import it.cgmconsulting.myblog.security.UserPrincipal;
+import it.cgmconsulting.myblog.service.AvatarService;
+import it.cgmconsulting.myblog.service.FileService;
 import it.cgmconsulting.myblog.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.io.IOException;
 import java.util.Optional;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("user")
@@ -30,6 +37,20 @@ public class UserController {
     PasswordEncoder passwordEncoder;
     @Autowired
     MailService mailService;
+    @Autowired
+    FileService fileService;
+    @Autowired
+    AvatarService avatarService;
+
+    // recuperiano info dal application.yaml
+    @Value("${avatar.size}")
+    private long size;
+    @Value("${avatar.width}")
+    private int width;
+    @Value("${avatar.height}")
+    private int height;
+    @Value("${avatar.extensions}")
+    private String[] extensions;
 
     // non messo il PreAutorized, basta il token - chiunque con un token può modificare
     @PatchMapping
@@ -58,7 +79,7 @@ public class UserController {
     @PatchMapping("/")
     @Transactional
     public ResponseEntity<?> updatePassword(@CurrentUser UserPrincipal userPrincipal,
-                @RequestParam @Pattern(regexp = "^[a-zA-Z0-9]{5,15}$", message = "Password deve contenere tra 5 e 20 caratteri") String newPassword) {
+                                            @RequestParam @Pattern(regexp = "^[a-zA-Z0-9]{5,15}$", message = "Password deve contenere tra 5 e 20 caratteri") String newPassword) {
 
         Optional<User> u = userService.findById(userPrincipal.getId());
         //passwordEncoder.encode(signUpRequest.getPassword().trim()),
@@ -71,7 +92,7 @@ public class UserController {
 
     @PostMapping("/auth")
     @Transactional
-    public ResponseEntity<?> forgotPassword(@RequestParam String username){
+    public ResponseEntity<?> forgotPassword(@RequestParam String username) {
 
         // genera Password troppo lunga per i controlli impostati
         //String temporaryPassword = UUID.randomUUID().toString();
@@ -83,5 +104,33 @@ public class UserController {
         mailService.sendMail(mailService.createMail(u.get(), "Reset password request", "Please login with this temporary password: \n", temporaryPassword));
         u.get().setPassword(passwordEncoder.encode(temporaryPassword));
         return new ResponseEntity<>("Please check your eMail and follow the instructions", HttpStatus.OK);
+    }
+
+    // agg avatar
+    // impostiamo i vincoli sull'immagine nell yaml
+    // si aspettono un JSON ma il multipartFile non è, e devo indicare cosa dovrà consumare
+    @PatchMapping(value = "avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    // hanno anche attributo pruduce, per l'output,
+    // se vogliamo qualcosa di diverso da.., es un XML, dobbiamo indicarlo
+    @Transactional
+    public ResponseEntity<?> updateAvatar(@CurrentUser UserPrincipal userPrincipal, @RequestParam @NotNull MultipartFile file) throws IOException {
+        if (!fileService.checkSize(file, size))
+            return new ResponseEntity<>("File empty or size great then " + size, HttpStatus.BAD_REQUEST);
+
+        if (!fileService.checkDimension(fileService.fromMultipartFileToBufferedImage(file), width, height))
+            return new ResponseEntity<>("Wrong width or height image", HttpStatus.BAD_REQUEST);
+
+        // per le estensioni, ci passa lui il metodo lungo e rognoso, affinato nei vari corsi
+        if (!fileService.checkExtension(file, extensions))
+            return new ResponseEntity<>("File type not allowed", HttpStatus.BAD_REQUEST);
+
+        //prima di settare, devo salvare l'immagine, obbligato inqualnto l'immagine è nuova
+        Avatar avatar = avatarService.fromMultipartFileToAvatar(file);
+        avatarService.save(avatar);
+
+        Optional<User> u = userService.findById(userPrincipal.getId());
+        u.get().setAvatar(avatarService.fromMultipartFileToAvatar(file));
+
+        return new ResponseEntity("Your avatar has been upsate", HttpStatus.OK);
     }
 }
