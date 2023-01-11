@@ -25,6 +25,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     // risultato della query restituisce un qualcosa che no è mai un null
     Optional<User> findByUsername(String username);
+    Optional<User> findByUsernameAndEnabledTrue(String username);
 
     Boolean existsByUsername(String username);
 
