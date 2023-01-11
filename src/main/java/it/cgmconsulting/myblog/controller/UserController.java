@@ -76,6 +76,12 @@ public class UserController {
     //  1-  utente decide di cambiare pw
     //  2-  utente non ricorda la pw e richiede reset
 
+    /**
+     * Cambio PW
+     * @param userPrincipal
+     * @param newPassword
+     * @return
+     */
     @PatchMapping("/")
     @Transactional
     public ResponseEntity<?> updatePassword(@CurrentUser UserPrincipal userPrincipal,
@@ -90,6 +96,11 @@ public class UserController {
         return new ResponseEntity<>("Password has been update", HttpStatus.OK);
     }
 
+    /**
+     * metodo per il recupero della PW dimenticata
+     * @param username
+     * @return
+     */
     @PostMapping("/auth")
     @Transactional
     public ResponseEntity<?> forgotPassword(@RequestParam String username) {
@@ -108,12 +119,13 @@ public class UserController {
 
     // agg avatar
     // impostiamo i vincoli sull'immagine nell yaml
-    // si aspettono un JSON ma il multipartFile non è, e devo indicare cosa dovrà consumare
+    // di default si aspetta un JSON ma il multipartFile non è, e devo indicare cosa dovrà consumare
     @PatchMapping(value = "avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     // hanno anche attributo pruduce, per l'output,
     // se vogliamo qualcosa di diverso da.., es un XML, dobbiamo indicarlo
     @Transactional
-    public ResponseEntity<?> updateAvatar(@CurrentUser UserPrincipal userPrincipal, @RequestParam @NotNull MultipartFile file) throws IOException {
+    public ResponseEntity<?> updateAvatar(@CurrentUser UserPrincipal userPrincipal,
+                                          @RequestParam @NotNull MultipartFile file) throws IOException {
         if (!fileService.checkSize(file, size))
             return new ResponseEntity<>("File empty or size great then " + size, HttpStatus.BAD_REQUEST);
 
