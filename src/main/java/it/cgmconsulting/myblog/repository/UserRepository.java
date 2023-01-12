@@ -44,7 +44,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     // TUTTE LE FOREIGNKEY RAPPRESENTANO PER HIBERNATE DEGLI OGGETTI
     @Query(value = "SELECT new it.cgmconsulting.myblog.payload.response.UserMe(u.id, u.username, u.email, ava) " +
             "FROM User u " +
-            "LEFT JOIN Avatar ava ON u.avatar = ava " + // uguale a " ON u.avatar.id = ava.id "
+            "LEFT JOIN Avatar ava ON u.avatar.id = ava.id " + // uguale a " ON u.avatar = ava "
             "WHERE u.id = :id"
     )
     UserMe getMe(@Param("id") long id); //quando devo passare parametri, li annoto con l'annotation @Param

@@ -5,6 +5,8 @@ import it.cgmconsulting.myblog.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class PostService {
 
@@ -18,5 +20,9 @@ public class PostService {
 
     public boolean existsByTitle(String title) {
         return postRepository.existsByTitle(title);
+    }
+
+    public Optional<Post> findById(long id){
+        return postRepository.findById(id);
     }
 }

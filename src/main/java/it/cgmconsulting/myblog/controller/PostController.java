@@ -1,30 +1,35 @@
 package it.cgmconsulting.myblog.controller;
 
+import it.cgmconsulting.myblog.entity.Category;
 import it.cgmconsulting.myblog.entity.Post;
 import it.cgmconsulting.myblog.entity.User;
 import it.cgmconsulting.myblog.payload.request.PostRequest;
 import it.cgmconsulting.myblog.security.CurrentUser;
 import it.cgmconsulting.myblog.security.UserPrincipal;
+import it.cgmconsulting.myblog.service.CategoryService;
 import it.cgmconsulting.myblog.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
+import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequestMapping("post")
 public class PostController {
 
-    @Autowired PostService postService;
+    @Autowired
+    PostService postService;
+    @Autowired
+    CategoryService categoryService;
 
     /**
-     *  memorizziamo una risorsa
+     * memorizziamo una risorsa
      *
      * @param request
      * @param userPrincipal
@@ -34,17 +39,103 @@ public class PostController {
     // lo può fare chi ha ruolo di EDITOR
     @PreAuthorize("hasRole('ROLE_EDITOR')")
     // @CurrentUser annotation custom - posso recuperare chi si è loggato
-    public ResponseEntity<?> save(@Valid @RequestBody PostRequest request, @CurrentUser UserPrincipal userPrincipal){
+    public ResponseEntity<?> save(@Valid @RequestBody PostRequest request, @CurrentUser UserPrincipal userPrincipal) {
 
         // controllo preventivo sull'unicità del titolo
-        if(postService.existsByTitle(request.getTitle()))
-            return new ResponseEntity<String>("A post with title '"+request.getTitle()+"' is already present", HttpStatus.BAD_REQUEST);
+        if (postService.existsByTitle(request.getTitle()))
+            return new ResponseEntity<String>("A post with title '" + request.getTitle() + "' is already present", HttpStatus.BAD_REQUEST);
 
         // istanziare un oggetto Post
         Post p = new Post(request.getTitle(), request.getOverview(), request.getContent(), new User(userPrincipal.getId()));
+        // e lo Persisto (è singolo, uso il .save(), avrei potuto usare @Transactional
         postService.save(p);
 
         //return new ResponseEntity<Post>(p, HttpStatus.CREATED);
-        return new ResponseEntity<String>("Nuovo Post creato ["+p.getId()+"]", HttpStatus.CREATED);
+        return new ResponseEntity<String>("Nuovo Post creato [" + p.getId() + "]", HttpStatus.CREATED);
+    }
+
+    /**
+     * Modifica del post
+     *
+     * @param postId
+     * @param userPrincipal
+     * @return
+     */
+    @PatchMapping("/{postId}")
+    @PreAuthorize("hasRole('ROLE_EDITOR')")
+    @Transactional // è una comodità se uso solo 1 tabella, con più tabelle diviene obbligatorio per pulizia
+    public ResponseEntity updatePost(@PathVariable long postId,
+                                     @Valid @RequestBody PostRequest request,
+                                     @CurrentUser UserPrincipal userPrincipal) {
+
+        Optional<Post> p = postService.findById(postId);
+        if (p.isEmpty())
+            return new ResponseEntity("Post not found", HttpStatus.NOT_FOUND);
+
+        // solo chi ha scritto il post può associare le categorie al post stesso
+        if (p.get().getAuthot().getId() != userPrincipal.getId())
+            return new ResponseEntity("You are not the author of this post.", HttpStatus.FORBIDDEN);
+
+        // controllo preventivo sull'unicità del titolo
+        if (postService.existsByTitle(request.getTitle()))
+            return new ResponseEntity("Title already exists", HttpStatus.BAD_REQUEST);
+        else //if (title != null)
+            p.get().setTitle(request.getTitle());
+
+        if (!p.get().getOverview().equals(request.getOverview()))
+            p.get().setOverview(request.getOverview());
+
+        if (!p.get().getContent().equalsIgnoreCase(request.getContent()))
+            p.get().setContent(request.getContent());
+
+        p.get().setPublished(false);
+
+        return new ResponseEntity("Post updated", HttpStatus.OK);
+    }
+
+    /**
+     * Aggiunge categorie al Post
+     * ad un secondo passaggio, elimina la categoria non più presente in elenco Set passato,
+     * e fa insert di nuove cat
+     *
+     * @param postId
+     * @param categories
+     * @return
+     */
+    @PatchMapping("/add-categories/{postId}")
+    @PreAuthorize("hasRole('ROLE_EDITOR')")
+    public ResponseEntity addCategoriesToPost(@PathVariable long postId,
+                                              @RequestParam Set<String> categories,
+                                              @CurrentUser UserPrincipal userPrincipal) {
+
+        Optional<Post> p = postService.findById(postId);
+        if (p.isEmpty())
+            return new ResponseEntity("Post not found", HttpStatus.NOT_FOUND);
+
+        // solo chi ha scritto il post può associare le categorie al post stesso
+        if (p.get().getAuthot().getId() != userPrincipal.getId())
+            return new ResponseEntity("You are not the author of this post.", HttpStatus.FORBIDDEN);
+
+        Set<Category> categoriesToAdd = categoryService.findByVisibleTrueAndCategoryNameIn(categories);
+        if (categoriesToAdd.isEmpty())
+            return new ResponseEntity("Categories not selected/found", HttpStatus.NOT_FOUND);
+
+        p.get().setCategories(categoriesToAdd);
+        postService.save(p.get());
+
+        return new ResponseEntity("Categories added to post " + p.get().getTitle(), HttpStatus.OK);
+    }
+
+    @PatchMapping("/publish/{postId}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Transactional
+    public ResponseEntity publishPost(@PathVariable long postId) {
+
+        Optional<Post> p = postService.findById(postId);
+        if (p.isEmpty())
+            return new ResponseEntity("Post not found", HttpStatus.NOT_FOUND);
+        p.get().setPublished(true);
+
+        return new ResponseEntity("Post" + p.get().getTitle() + " have been updated and Published", HttpStatus.OK);
     }
 }

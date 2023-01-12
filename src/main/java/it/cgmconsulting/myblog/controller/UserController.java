@@ -57,7 +57,7 @@ public class UserController {
 
     // non messo il PreAutorized, basta il token - chiunque con un token può modificare
     @PatchMapping
-    // in virtu del Tran, se il dato non varia, Hibernate non esegue una update
+    // se il dato non varia, Hibernate non esegue una update
     @Transactional
     public ResponseEntity<?> update(@RequestBody @Valid UpdateUserProfile request, @CurrentUser UserPrincipal userPrincipal) {
 
@@ -65,14 +65,14 @@ public class UserController {
         // verifico se esiste utente con username passata dalla request
         // se esiste, verifico che l'id dell'utente trovato NON corrisponda all'id dello UserPrincipal
         if (!u.get().getUsername().equals(request.getNewUsername()) && userService.existsByUsername(request.getNewUsername()))
-            return new ResponseEntity<>("Username (or eMail) already in use", HttpStatus.FORBIDDEN);
+            return new ResponseEntity("Username (or eMail) already in use", HttpStatus.FORBIDDEN);
         u.get().setUsername(request.getNewUsername());
 
         if (!u.get().getEmail().equals(request.getNewEmail()) && userService.existsByEmail(request.getNewEmail()))
-            return new ResponseEntity<>("Email already in use", HttpStatus.FORBIDDEN);
+            return new ResponseEntity("Email already in use", HttpStatus.FORBIDDEN);
         u.get().setEmail(request.getNewEmail());
 
-        return new ResponseEntity<>("User has been updated", HttpStatus.OK);
+        return new ResponseEntity("User has been updated", HttpStatus.OK);
     }
 
     // cambio password di 2 tipi:
@@ -98,7 +98,7 @@ public class UserController {
             return new ResponseEntity<>("The new password is equal to old password", HttpStatus.BAD_REQUEST);
         u.get().setPassword(passwordEncoder.encode(newPassword));
 
-        return new ResponseEntity<>("Password has been update", HttpStatus.OK);
+        return new ResponseEntity("Password has been update", HttpStatus.OK);
     }
 
     /**
@@ -114,13 +114,17 @@ public class UserController {
         // genera Password troppo lunga per i controlli impostati
         //String temporaryPassword = UUID.randomUUID().toString();
         String temporaryPassword = userService.generateSecureRandomPassword();
-        Optional<User> u = userService.findByUsernameAndEnabledTrue(username);
+        Optional<User> u = userService.findByUsernameAndEnabledTrue(username.trim());
         if (u.isEmpty())
-            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+            return new ResponseEntity("User not found", HttpStatus.NOT_FOUND);
 
-        mailService.sendMail(mailService.createMail(u.get(), "Reset password request", "Please login with this temporary password: \n", temporaryPassword));
+        mailService.sendMail(mailService.createMail(u.get(),
+                "Reset password request",
+                "Please login with this temporary password: \n",
+                temporaryPassword));
         u.get().setPassword(passwordEncoder.encode(temporaryPassword));
-        return new ResponseEntity<>("Please check your eMail and follow the instructions", HttpStatus.OK);
+
+        return new ResponseEntity("Please check your eMail and follow the instructions", HttpStatus.OK);
     }
 
     // agg avatar
@@ -133,14 +137,14 @@ public class UserController {
     public ResponseEntity<?> updateAvatar(@CurrentUser UserPrincipal userPrincipal,
                                           @RequestParam @NotNull MultipartFile file) throws IOException {
         if (!fileService.checkSize(file, size))
-            return new ResponseEntity<>("File empty or size great then " + size, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity("File empty or size great then " + size, HttpStatus.BAD_REQUEST);
 
         if (!fileService.checkDimension(fileService.fromMultipartFileToBufferedImage(file), width, height))
-            return new ResponseEntity<>("Wrong width or height image", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity("Wrong width or height image", HttpStatus.BAD_REQUEST);
 
         // per le estensioni, ci passa lui il metodo lungo e rognoso, affinato nei vari corsi
         if (!fileService.checkExtension(file, extensions))
-            return new ResponseEntity<>("File type not allowed", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity("File type not allowed", HttpStatus.BAD_REQUEST);
 
         Optional<User> u = userService.findById(userPrincipal.getId());
         //prima di settare, devo salvare l'immagine, obbligato inqualnto l'immagine è nuova
@@ -164,7 +168,7 @@ public class UserController {
 //        return new ResponseEntity(u.get(), HttpStatus.OK);
 //    }
     @GetMapping("me")
-    public ResponseEntity<?> getMe(@CurrentUser UserPrincipal userPrincipal) {
+    public ResponseEntity<?> getMe(@CurrentUser UserPrincipal userPrincipal){
         UserMe u = userService.getMe(userPrincipal.getId());
         log.info(u.toString());
         return new ResponseEntity(u, HttpStatus.OK);
@@ -172,13 +176,16 @@ public class UserController {
 
     @DeleteMapping("avatar")
     @Transactional
-    public ResponseEntity<?> deleteAvatar(@CurrentUser UserPrincipal userPrincipal){
+    public ResponseEntity<?> deleteAvatar(@CurrentUser UserPrincipal userPrincipal) {
 
         Optional<User> u = userService.findById(userPrincipal.getId());
         Avatar avatar = u.get().getAvatar();
-        u.get().setAvatar(null);;
-        avatarService.delete(avatar);
-
-        return new ResponseEntity("Your avatar has been removed", HttpStatus.OK);
+        if (avatar != null) {
+            u.get().setAvatar(null);
+            avatarService.delete(avatar);
+            return new ResponseEntity("Your avatar has been removed", HttpStatus.OK);
+        } else {
+            return new ResponseEntity("No avatar to removed", HttpStatus.BAD_REQUEST);
+        }
     }
 }

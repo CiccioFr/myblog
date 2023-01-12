@@ -57,11 +57,16 @@ public class UserService {
         return userRepository.findByUsernameAndEnabledTrue(username);
     }
 
+    public UserMe getMe(long id) {
+        return userRepository.getMe(id);
+    }
+
     // ************ GENERATORE RANDOM DI PASSWORD ************ //
     Random random = new SecureRandom();
 
     public String generateSecureRandomPassword() {
         Stream<Character> pwdStream = Stream.concat(getRandomNumbers(2),
+                // commento per non avere caratteri speciali nella PW
                 /*Stream.concat(getRandomSpecialChars(2),*/
                 Stream.concat(getRandomAlphabets(2, true), getRandomAlphabets(4, false))
         );
@@ -93,8 +98,4 @@ public class UserService {
         return characters.mapToObj(data -> (char) data);
     }
     // ************************ //
-
-    public UserMe getMe(long id){
-        return userRepository.getMe(id);
-    }
 }

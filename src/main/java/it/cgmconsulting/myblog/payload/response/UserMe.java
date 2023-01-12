@@ -1,12 +1,9 @@
 package it.cgmconsulting.myblog.payload.response;
 
 import it.cgmconsulting.myblog.entity.Avatar;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor @ToString
 public class UserMe {
 
     private long id;
