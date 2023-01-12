@@ -169,4 +169,15 @@ public class UserController {
         log.info(u.toString());
         return new ResponseEntity(u, HttpStatus.OK);
     }
+
+    @DeleteMapping("avatar")
+    @Transactional
+    public ResponseEntity<?> deleteAvatar(@CurrentUser UserPrincipal userPrincipal){
+
+        Optional<User> u = userService.findById(userPrincipal.getId());
+        u.get().setAvatar(null);;
+        avatarService.delete(u.get().getAvatar());
+
+        return new ResponseEntity("Your avatar has been removed", HttpStatus.OK);
+    }
 }
