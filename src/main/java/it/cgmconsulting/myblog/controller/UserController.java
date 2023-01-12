@@ -4,6 +4,7 @@ import it.cgmconsulting.myblog.entity.Avatar;
 import it.cgmconsulting.myblog.entity.User;
 import it.cgmconsulting.myblog.mail.MailService;
 import it.cgmconsulting.myblog.payload.request.UpdateUserProfile;
+import it.cgmconsulting.myblog.payload.response.UserMe;
 import it.cgmconsulting.myblog.security.CurrentUser;
 import it.cgmconsulting.myblog.security.UserPrincipal;
 import it.cgmconsulting.myblog.service.AvatarService;
@@ -156,10 +157,16 @@ public class UserController {
         return new ResponseEntity("Your avatar has been upsate", HttpStatus.OK);
     }
 
+    //    @GetMapping("me")
+//    public ResponseEntity<?> getMe(@CurrentUser UserPrincipal userPrincipal) {
+//        Optional<User> u = userService.findById(userPrincipal.getId());
+//        log.info(u.get().toString());
+//        return new ResponseEntity(u.get(), HttpStatus.OK);
+//    }
     @GetMapping("me")
     public ResponseEntity<?> getMe(@CurrentUser UserPrincipal userPrincipal) {
-        Optional<User> u = userService.findById(userPrincipal.getId());
-        log.info(u.get().toString());
-        return new ResponseEntity(u.get(), HttpStatus.OK);
+        UserMe u = userService.getMe(userPrincipal.getId());
+        log.info(u.toString());
+        return new ResponseEntity(u, HttpStatus.OK);
     }
 }

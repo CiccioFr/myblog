@@ -1,6 +1,7 @@
 package it.cgmconsulting.myblog.service;
 
 import it.cgmconsulting.myblog.entity.User;
+import it.cgmconsulting.myblog.payload.response.UserMe;
 import it.cgmconsulting.myblog.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -93,4 +94,7 @@ public class UserService {
     }
     // ************************ //
 
+    public UserMe getMe(long id){
+        return userRepository.getMe(id);
+    }
 }
