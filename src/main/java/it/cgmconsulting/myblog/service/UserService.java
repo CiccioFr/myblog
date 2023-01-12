@@ -56,7 +56,7 @@ public class UserService {
         return userRepository.findByUsernameAndEnabledTrue(username);
     }
 
-    // ************
+    // ************ GENERATORE RANDOM DI PASSWORD ************ //
     Random random = new SecureRandom();
 
     public String generateSecureRandomPassword() {

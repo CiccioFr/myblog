@@ -9,6 +9,7 @@ import it.cgmconsulting.myblog.security.UserPrincipal;
 import it.cgmconsulting.myblog.service.AvatarService;
 import it.cgmconsulting.myblog.service.FileService;
 import it.cgmconsulting.myblog.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -29,6 +30,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("user")
 @Validated
+@Slf4j
 public class UserController {
 
     @Autowired
@@ -42,7 +44,7 @@ public class UserController {
     @Autowired
     AvatarService avatarService;
 
-    // recuperiano info dal application.yaml
+    // recupero info dal application.yaml
     @Value("${avatar.size}")
     private long size;
     @Value("${avatar.width}")
@@ -78,6 +80,7 @@ public class UserController {
 
     /**
      * Cambio PW
+     *
      * @param userPrincipal
      * @param newPassword
      * @return
@@ -89,6 +92,7 @@ public class UserController {
 
         Optional<User> u = userService.findById(userPrincipal.getId());
         //passwordEncoder.encode(signUpRequest.getPassword().trim()),
+        // verifico che la nuova password non sia identica a quella presente sul DB
         if (passwordEncoder.matches(newPassword, u.get().getPassword()))
             return new ResponseEntity<>("The new password is equal to old password", HttpStatus.BAD_REQUEST);
         u.get().setPassword(passwordEncoder.encode(newPassword));
@@ -98,6 +102,7 @@ public class UserController {
 
     /**
      * metodo per il recupero della PW dimenticata
+     *
      * @param username
      * @return
      */
@@ -108,7 +113,7 @@ public class UserController {
         // genera Password troppo lunga per i controlli impostati
         //String temporaryPassword = UUID.randomUUID().toString();
         String temporaryPassword = userService.generateSecureRandomPassword();
-        Optional<User> u = userService.findByUsername(username);
+        Optional<User> u = userService.findByUsernameAndEnabledTrue(username);
         if (u.isEmpty())
             return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
 
@@ -136,13 +141,25 @@ public class UserController {
         if (!fileService.checkExtension(file, extensions))
             return new ResponseEntity<>("File type not allowed", HttpStatus.BAD_REQUEST);
 
+        Optional<User> u = userService.findById(userPrincipal.getId());
         //prima di settare, devo salvare l'immagine, obbligato inqualnto l'immagine è nuova
         Avatar avatar = avatarService.fromMultipartFileToAvatar(file);
+
+        if (u.get().getAvatar() != null)
+            avatar.setId(u.get().getAvatar().getId());
+        // farà l'insert se è la prima immagine che viene associata,
+        // eseguirà update in DB se trova già una corrispondenza (confutata dall'if)
         avatarService.save(avatar);
 
-        Optional<User> u = userService.findById(userPrincipal.getId());
         u.get().setAvatar(avatarService.fromMultipartFileToAvatar(file));
 
         return new ResponseEntity("Your avatar has been upsate", HttpStatus.OK);
+    }
+
+    @GetMapping("me")
+    public ResponseEntity<?> getMe(@CurrentUser UserPrincipal userPrincipal) {
+        Optional<User> u = userService.findById(userPrincipal.getId());
+        log.info(u.get().toString());
+        return new ResponseEntity(u.get(), HttpStatus.OK);
     }
 }
