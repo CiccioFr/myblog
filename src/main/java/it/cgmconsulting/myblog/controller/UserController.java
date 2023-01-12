@@ -175,8 +175,9 @@ public class UserController {
     public ResponseEntity<?> deleteAvatar(@CurrentUser UserPrincipal userPrincipal){
 
         Optional<User> u = userService.findById(userPrincipal.getId());
+        Avatar avatar = u.get().getAvatar();
         u.get().setAvatar(null);;
-        avatarService.delete(u.get().getAvatar());
+        avatarService.delete(avatar);
 
         return new ResponseEntity("Your avatar has been removed", HttpStatus.OK);
     }
