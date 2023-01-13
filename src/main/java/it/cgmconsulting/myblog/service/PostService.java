@@ -25,4 +25,9 @@ public class PostService {
     public Optional<Post> findById(long id){
         return postRepository.findById(id);
     }
+
+    public Optional<Post> findByIdAndPublishedTrue(long id){
+        return postRepository.findByIdAndPublishedTrue(id);
+    };
+
 }

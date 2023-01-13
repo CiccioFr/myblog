@@ -13,9 +13,9 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * Gestione della Primary Key composta
+ *  Gestione della Primary Key composta
  */
-@Embeddable
+@Embeddable // per chiave composta o ForeignKey
 @Getter
 @Setter
 @NoArgsConstructor
