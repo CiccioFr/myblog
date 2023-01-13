@@ -77,18 +77,19 @@ public class FileService {
         return false;
     }
 
-    /** caricamento fisico dell'immagine, ed eliminazione della vecchia immagine
+    /**
+     * caricamento fisico dell'immagine, ed eliminazione della vecchia immagine
      *
      * @param file
      * @param postId
      * @param oldFile
      * @return
      */
-    public String uploadPostImage(MultipartFile file, long postId, String oldFile){
+    public String uploadPostImage(MultipartFile file, long postId, String oldFile) {
         String filename = renameImage(postId, file.getOriginalFilename());
-        Path path = Paths.get(imagePath+filename);
+        Path path = Paths.get(imagePath + filename);
         try {
-            if(oldFile != null) {
+            if (oldFile != null) {
                 Files.delete(Paths.get(imagePath + oldFile));
             }
             Files.write(path, file.getBytes());
@@ -98,8 +99,14 @@ public class FileService {
         return filename;
     }
 
-    // rinominare un file
-    public String renameImage(long postId, String filename){
-        return postId+"."+filename.substring(filename.lastIndexOf(".")+1);
+    /**
+     * rinominare un file
+     *
+     * @param postId
+     * @param filename
+     * @return
+     */
+    public String renameImage(long postId, String filename) {
+        return postId + "." + filename.substring(filename.lastIndexOf(".") + 1);
     }
 }

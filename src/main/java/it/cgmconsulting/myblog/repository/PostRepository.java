@@ -19,12 +19,13 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     Optional<Post> findByIdAndPublishedTrue(long id);
 
-    // metodo derivato
-    boolean existsByTitle(String title);
-
-    // nei 2 seguenti viene restituita
+    /* verifica esistenza title nei tre modi */
+    // viene restituito:
     // - la stringa del titolo se esiste
     // - null se non esiste
+
+    // metodo derivato
+    boolean existsByTitle(String title);
 
     // JPQL - qui si fa una query secca e return string
     // il parametro che intenfico deve essere identico alla quesry :title
@@ -59,7 +60,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "ORDER BY p.updatedAt DESC")
     List<PostSearchResponse> getPostSearchResponse(@Param("keyword") String keyword);
 
-    // long id, String title, String image, String author, LocalDateTime updatedAt
     @Query(value = "SELECT new it.cgmconsulting.myblog.payload.response.PostSearchResponse(" +
             "p.id, " +
             "p.title, " +

@@ -42,7 +42,8 @@ public class RatingController {
      */
     @PutMapping("/{postId}/{rate}")
     @PreAuthorize("hasRole('ROLE_READER')")
-    public ResponseEntity vote(@PathVariable long postId, @CurrentUser UserPrincipal userPrincipal, @PathVariable @Min(1) @Max(5) byte rate) {
+    public ResponseEntity vote(@PathVariable long postId, @CurrentUser UserPrincipal userPrincipal,
+                               @PathVariable @Min(1) @Max(5) byte rate) {
 
         Optional<Post> p = postService.findByIdAndPublishedTrue(postId);
         if (p.isEmpty())

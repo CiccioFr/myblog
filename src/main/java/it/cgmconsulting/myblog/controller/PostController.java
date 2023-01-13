@@ -36,7 +36,7 @@ public class PostController {
     @Autowired
     FileService fileService;
 
-    // recupero info per immagine dal application.yaml
+    // recupero info per immagine del Post dal application.yaml
     @Value("${post.size}")
     private long size;
     @Value("${post.width}")
@@ -176,7 +176,8 @@ public class PostController {
     @PreAuthorize("hasRole('ROLE_EDITOR')")
     public ResponseEntity addImage(@PathVariable long postId,
                                    @CurrentUser UserPrincipal userPrincipal,
-                                   // interfaccai di spring, è la rappresentazione del file che viene inviata (in upload) in una request,
+                                   // interfaccia di spring, è la rappresentazione del file che viene inviata
+                                   // (in upload) in una request,
                                    // salva il file in memoria, dopo di che o lo persiste su rete o su DB
                                    @RequestParam MultipartFile file) {
 
