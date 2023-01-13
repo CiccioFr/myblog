@@ -4,6 +4,8 @@ import it.cgmconsulting.myblog.entity.Category;
 import it.cgmconsulting.myblog.entity.Post;
 import it.cgmconsulting.myblog.entity.User;
 import it.cgmconsulting.myblog.payload.request.PostRequest;
+import it.cgmconsulting.myblog.payload.response.PostBoxResponse;
+import it.cgmconsulting.myblog.payload.response.PostSearchResponse;
 import it.cgmconsulting.myblog.security.CurrentUser;
 import it.cgmconsulting.myblog.security.UserPrincipal;
 import it.cgmconsulting.myblog.service.CategoryService;
@@ -19,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -88,7 +91,7 @@ public class PostController {
             return new ResponseEntity("Post not found", HttpStatus.NOT_FOUND);
 
         // solo chi ha scritto il post può associare le categorie al post stesso
-        if (p.get().getAuthot().getId() != userPrincipal.getId())
+        if (p.get().getAuthor().getId() != userPrincipal.getId())
             return new ResponseEntity("You are not the author of this post.", HttpStatus.FORBIDDEN);
 
         // controllo preventivo sull'unicità del titolo
@@ -128,7 +131,7 @@ public class PostController {
             return new ResponseEntity("Post not found", HttpStatus.NOT_FOUND);
 
         // solo chi ha scritto il post può associare le categorie al post stesso
-        if (p.get().getAuthot().getId() != userPrincipal.getId())
+        if (p.get().getAuthor().getId() != userPrincipal.getId())
             return new ResponseEntity("You are not the author of this post.", HttpStatus.FORBIDDEN);
 
         Set<Category> categoriesToAdd = categoryService.findByVisibleTrueAndCategoryNameIn(categories);
@@ -196,7 +199,18 @@ public class PostController {
             return new ResponseEntity("Something went wrong uploading image", HttpStatus.INTERNAL_SERVER_ERROR);
 
         p.get().setImage(imageToUpload);
-        return new ResponseEntity("Image " + imageToUpload + " Succesfully uploaded", HttpStatus.OK);
+        return new ResponseEntity("Image " + imageToUpload + " Successfully uploaded", HttpStatus.OK);
+    }
 
+    @GetMapping("/public/{item}")
+    public ResponseEntity getBoxesInHomePage(@PathVariable int item) {
+        List<PostBoxResponse> boxes = postService.getPostBoxes(item);
+        return new ResponseEntity(boxes, HttpStatus.OK);
+    }
+
+    @GetMapping("/public/search")
+    public ResponseEntity getPostSearchResponse(@RequestParam String keyword) {
+        List<PostSearchResponse> result = postService.getPostSearchResponse(keyword);
+        return new ResponseEntity(result, HttpStatus.OK);
     }
 }

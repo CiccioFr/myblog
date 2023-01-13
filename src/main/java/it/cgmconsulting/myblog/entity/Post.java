@@ -4,7 +4,6 @@ import it.cgmconsulting.myblog.entity.common.CreationUpdate;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.Check;
 
 import javax.persistence.*;
 import java.util.*;
@@ -39,7 +38,7 @@ public class Post extends CreationUpdate{
     // piu post possono essere scritti da un autore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author", nullable = false)
-    private User authot;
+    private User author;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "post_categories",
@@ -54,11 +53,11 @@ public class Post extends CreationUpdate{
     @OneToMany(mappedBy = "post", orphanRemoval = true, cascade = CascadeType.ALL)
     List<Comment> comments = new ArrayList<>();
 
-    public Post(String title, String overview, String content, User authot) {
+    public Post(String title, String overview, String content, User author) {
         this.title = title;
         this.overview = overview;
         this.content = content;
-        this.authot = authot;
+        this.author = author;
     }
 
     @Override

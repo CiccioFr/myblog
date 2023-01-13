@@ -102,7 +102,7 @@ public class UserController {
     }
 
     /**
-     * metodo per il recupero della PW dimenticata
+     * Recupero della PW dimenticata
      *
      * @param username
      * @return
@@ -127,6 +127,14 @@ public class UserController {
         return new ResponseEntity("Please check your eMail and follow the instructions", HttpStatus.OK);
     }
 
+    /**
+     * UpDate dell'Avatar
+     *
+     * @param userPrincipal
+     * @param file
+     * @return
+     * @throws IOException
+     */
     // agg avatar
     // impostiamo i vincoli sull'immagine nell yaml
     // di default si aspetta un JSON ma il multipartFile non è, e devo indicare cosa dovrà consumare
@@ -168,7 +176,7 @@ public class UserController {
 //        return new ResponseEntity(u.get(), HttpStatus.OK);
 //    }
     @GetMapping("me")
-    public ResponseEntity<?> getMe(@CurrentUser UserPrincipal userPrincipal){
+    public ResponseEntity<?> getMe(@CurrentUser UserPrincipal userPrincipal) {
         UserMe u = userService.getMe(userPrincipal.getId());
         log.info(u.toString());
         return new ResponseEntity(u, HttpStatus.OK);

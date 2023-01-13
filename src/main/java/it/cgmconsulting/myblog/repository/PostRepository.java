@@ -2,6 +2,9 @@ package it.cgmconsulting.myblog.repository;
 
 import it.cgmconsulting.myblog.entity.Post;
 import it.cgmconsulting.myblog.payload.response.PostBoxResponse;
+import it.cgmconsulting.myblog.payload.response.PostSearchResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -35,11 +38,37 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     // uso di JPQL -> LIMIT  non esiste perché non usato da tutti db relazionali
     // ergo:
     @Query(value = "SELECT new it.cgmconsulting.myblog.payload.response.PostBoxResponse(" +
-            "p.id," +
-            "p.title," +
-            "p.image)" +
+            "p.id, " +
+            "p.title, " +
+            "p.image) " +
             "FROM Post p " +
             "WHERE p.published = true " +
             "ORDER BY p.updatedAt DESC")
     List<PostBoxResponse> getPostBoxes();
+
+    // long id, String title, String image, String author, LocalDateTime updatedAt
+    @Query(value = "SELECT new it.cgmconsulting.myblog.payload.response.PostSearchResponse(" +
+            "p.id, " +
+            "p.title, " +
+            "p.image, " +
+            "p.author.username, " +
+            "p.updatedAt) " +
+            "FROM Post p " +
+            "WHERE p.published = true " +
+            "AND p.title LIKE :keyword OR p.content LIKE :keyword " +
+            "ORDER BY p.updatedAt DESC")
+    List<PostSearchResponse> getPostSearchResponse(@Param("keyword") String keyword);
+
+    // long id, String title, String image, String author, LocalDateTime updatedAt
+    @Query(value = "SELECT new it.cgmconsulting.myblog.payload.response.PostSearchResponse(" +
+            "p.id, " +
+            "p.title, " +
+            "p.image, " +
+            "p.author.username, " +
+            "p.updatedAt) " +
+            "FROM Post p " +
+            "WHERE p.published = true " +
+            "AND p.title LIKE :keyword OR p.content LIKE :keyword " +
+            "ORDER BY p.updatedAt DESC")
+    Page<PostSearchResponse> getPostSearchResponsePaged(Pageable pageable, @Param("keyword") String keyword);
 }
