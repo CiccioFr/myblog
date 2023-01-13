@@ -32,7 +32,6 @@ public class Post extends CreationUpdate{
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @Column
     private String image;
 
     private boolean published = false;

@@ -7,12 +7,15 @@ import it.cgmconsulting.myblog.payload.request.PostRequest;
 import it.cgmconsulting.myblog.security.CurrentUser;
 import it.cgmconsulting.myblog.security.UserPrincipal;
 import it.cgmconsulting.myblog.service.CategoryService;
+import it.cgmconsulting.myblog.service.FileService;
 import it.cgmconsulting.myblog.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
@@ -27,6 +30,18 @@ public class PostController {
     PostService postService;
     @Autowired
     CategoryService categoryService;
+    @Autowired
+    FileService fileService;
+
+    // recupero info per immagine dal application.yaml
+    @Value("${post.size}")
+    private long size;
+    @Value("${post.width}")
+    private int width;
+    @Value("${post.height}")
+    private int height;
+    @Value("${post.extensions}")
+    private String[] extensions;
 
     /**
      * memorizziamo una risorsa
@@ -126,6 +141,13 @@ public class PostController {
         return new ResponseEntity("Categories added to post " + p.get().getTitle(), HttpStatus.OK);
     }
 
+    /**
+     * Pubblicazione del Post
+     * L'Admin convalida e rende visibile un Post
+     *
+     * @param postId
+     * @return
+     */
     @PatchMapping("/publish/{postId}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Transactional
@@ -137,5 +159,44 @@ public class PostController {
         p.get().setPublished(true);
 
         return new ResponseEntity("Post" + p.get().getTitle() + " have been updated and Published", HttpStatus.OK);
+    }
+
+    /**
+     * Carica ed associa immagine al post
+     *
+     * @param postId
+     * @param userPrincipal
+     * @param file
+     * @return
+     */
+    @PatchMapping("/add-imase/{postId}")
+    @PreAuthorize("hasRole('ROLE_EDITOR')")
+    public ResponseEntity addImage(@PathVariable long postId,
+                                   @CurrentUser UserPrincipal userPrincipal,
+                                   // interfaccai di spring, è la rappresentazione del file che viene inviata (in upload) in una request,
+                                   // salva il file in memoria, dopo di che o lo persiste su rete o su DB
+                                   @RequestParam MultipartFile file) {
+
+        if (!fileService.checkSize(file, size))
+            return new ResponseEntity("File empty or size great then " + size, HttpStatus.BAD_REQUEST);
+
+        if (!fileService.checkDimension(fileService.fromMultipartFileToBufferedImage(file), width, height))
+            return new ResponseEntity("Wrong width or height image", HttpStatus.BAD_REQUEST);
+
+        // per le estensioni, ci passa lui il metodo lungo e rognoso, affinato nei vari corsi
+        if (!fileService.checkExtension(file, extensions))
+            return new ResponseEntity("File type not allowed", HttpStatus.BAD_REQUEST);
+
+        Optional<Post> p = postService.findById(postId);
+        if (p.isEmpty())
+            return new ResponseEntity("Post not found", HttpStatus.NOT_FOUND);
+
+        String imageToUpload = fileService.uploadPostImage(file, postId, p.get().getImage());
+        if (imageToUpload == null)
+            return new ResponseEntity("Something went wrong uploading image", HttpStatus.INTERNAL_SERVER_ERROR);
+
+        p.get().setImage(imageToUpload);
+        return new ResponseEntity("Image " + imageToUpload + " Succesfully uploaded", HttpStatus.OK);
+
     }
 }

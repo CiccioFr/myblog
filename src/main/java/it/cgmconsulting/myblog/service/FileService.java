@@ -1,5 +1,6 @@
 package it.cgmconsulting.myblog.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -8,10 +9,17 @@ import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Iterator;
 
 @Service
 public class FileService {
+
+    // di Spring, non di lombok
+    @Value("${post.path}")
+    private String imagePath;
 
     /**
      * verifica dellle dimenzioni in peso
@@ -69,4 +77,29 @@ public class FileService {
         return false;
     }
 
+    /** caricamento fisico dell'immagine, ed eliminazione della vecchia immagine
+     *
+     * @param file
+     * @param postId
+     * @param oldFile
+     * @return
+     */
+    public String uploadPostImage(MultipartFile file, long postId, String oldFile){
+        String filename = renameImage(postId, file.getOriginalFilename());
+        Path path = Paths.get(imagePath+filename);
+        try {
+            if(oldFile != null) {
+                Files.delete(Paths.get(imagePath + oldFile));
+            }
+            Files.write(path, file.getBytes());
+        } catch (IOException e) {
+            return null;
+        }
+        return filename;
+    }
+
+    // rinominare un file
+    public String renameImage(long postId, String filename){
+        return postId+"."+filename.substring(filename.lastIndexOf(".")+1);
+    }
 }
