@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -209,9 +210,22 @@ public class PostController {
         return new ResponseEntity(boxes, HttpStatus.OK);
     }
 
+    /**
+     * ricerca di Post con Paginazione
+     * @param keyword
+     * @param pageNumber
+     * @param pageSize
+     * @param direction
+     * @param sortBy
+     * @return
+     */
     @GetMapping("/public/search")
-    public ResponseEntity getPostSearchResponse(@RequestParam String keyword) {
-        List<PostSearchResponse> result = postService.getPostSearchResponse(keyword);
+    public ResponseEntity getPostSearchResponse(@RequestParam @NotBlank String keyword,
+                                                @RequestParam(defaultValue = "0") int pageNumber,
+                                                @RequestParam(defaultValue = "2") int pageSize,
+                                                @RequestParam(defaultValue = "DESC") String direction,
+                                                @RequestParam(defaultValue = "updatedAt") String sortBy) {
+        List<PostSearchResponse> result = postService.getPostSearchResponsePaged(pageNumber, pageSize, direction, sortBy, keyword);
         return new ResponseEntity(result, HttpStatus.OK);
     }
 }

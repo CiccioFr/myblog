@@ -73,9 +73,8 @@ public class PostService {
             String sortBy,      // la colonna su cui effettuare l'ordinamento
             String keyword
     ) {
-        Pageable pageable = PageRequest.of(pageNumberStart, pageSize,
-                Sort.Direction.valueOf(direction.toUpperCase()), sortBy);
-        Page<PostSearchResponse> pageResult = postRepository.getPostSearchResponsePaged(pageable, keyword);
+        Pageable pageable = PageRequest.of(pageNumberStart, pageSize, Sort.Direction.valueOf(direction.toUpperCase()), sortBy);
+        Page<PostSearchResponse> pageResult = postRepository.getPostSearchResponsePaged(pageable, "%" + keyword + "%");
         if (pageResult.hasContent()) {
             // List<PostSearchResponse> list = pageResult
         } else {

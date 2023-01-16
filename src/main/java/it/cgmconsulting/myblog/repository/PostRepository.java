@@ -69,6 +69,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "FROM Post p " +
             "WHERE p.published = true " +
             "AND p.title LIKE :keyword OR p.content LIKE :keyword " +
-            "ORDER BY p.updatedAt DESC")
+            "ORDER BY p.updatedAt DESC",
+            countQuery = "SELECT COUNT(p) from Post p WHERE p.published=true AND p.title LIKE :keyword OR p.content LIKE :keyword")
     Page<PostSearchResponse> getPostSearchResponsePaged(Pageable pageable, @Param("keyword") String keyword);
+    // page ha 2 metodi ma non riesce a calcolarsi il nr di elementi (la size)
 }
