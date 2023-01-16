@@ -2,6 +2,7 @@ package it.cgmconsulting.myblog.service;
 
 import it.cgmconsulting.myblog.entity.Post;
 import it.cgmconsulting.myblog.payload.response.PostBoxResponse;
+import it.cgmconsulting.myblog.payload.response.PostDetailResponse;
 import it.cgmconsulting.myblog.payload.response.PostSearchResponse;
 import it.cgmconsulting.myblog.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,4 +83,9 @@ public class PostService {
         }
         return null;
     }
+
+    public PostDetailResponse getPostDetailResponse(long postId){
+        return postRepository.getPostDetailResponse(postId);
+    }
+
 }

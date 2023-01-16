@@ -2,6 +2,7 @@ package it.cgmconsulting.myblog.repository;
 
 import it.cgmconsulting.myblog.entity.Post;
 import it.cgmconsulting.myblog.payload.response.PostBoxResponse;
+import it.cgmconsulting.myblog.payload.response.PostDetailResponse;
 import it.cgmconsulting.myblog.payload.response.PostSearchResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -70,7 +71,22 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "WHERE p.published = true " +
             "AND p.title LIKE :keyword OR p.content LIKE :keyword " +
             "ORDER BY p.updatedAt DESC",
+            // page ha 2 metodi ma non riesce a calcolarsi il nr di elementi (la size)
             countQuery = "SELECT COUNT(p) from Post p WHERE p.published=true AND p.title LIKE :keyword OR p.content LIKE :keyword")
     Page<PostSearchResponse> getPostSearchResponsePaged(Pageable pageable, @Param("keyword") String keyword);
-    // page ha 2 metodi ma non riesce a calcolarsi il nr di elementi (la size)
+
+    @Query(value = "SELECT new it.cgmconsulting.myblog.payload.response.PostSearchResponse(" +
+            // i campi devono corrispondere al costruttore
+            "p.id, " +
+            "p.title, " +
+            "p.content, " +
+            "p.image," +
+            "p.updatedAt, " +
+            "p.author.username, " +
+            //"AVG(voto.rate)) AS average " +
+            "(SELECT COALESCE(ROUND(AVG(r.rate), 2), 0d) FROM Rate r WHERE r.ratingId.post.id = p.id) AS average) " +
+            "FROM Post p " +
+            //"LEFT JOIN Rating voto ON p.id = voto.ratingId.post.id " +
+            "WHERE p.published = true AND p.id = :id")
+    PostDetailResponse getPostDetailResponse(@Param("id") long id);
 }

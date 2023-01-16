@@ -5,6 +5,7 @@ import it.cgmconsulting.myblog.entity.Post;
 import it.cgmconsulting.myblog.entity.User;
 import it.cgmconsulting.myblog.payload.request.PostRequest;
 import it.cgmconsulting.myblog.payload.response.PostBoxResponse;
+import it.cgmconsulting.myblog.payload.response.PostDetailResponse;
 import it.cgmconsulting.myblog.payload.response.PostSearchResponse;
 import it.cgmconsulting.myblog.security.CurrentUser;
 import it.cgmconsulting.myblog.security.UserPrincipal;
@@ -211,7 +212,8 @@ public class PostController {
     }
 
     /**
-     * ricerca di Post con Paginazione
+     * ricerca di Posts con Paginazione
+     *
      * @param keyword
      * @param pageNumber
      * @param pageSize
@@ -228,4 +230,19 @@ public class PostController {
         List<PostSearchResponse> result = postService.getPostSearchResponsePaged(pageNumber, pageSize, direction, sortBy, keyword);
         return new ResponseEntity(result, HttpStatus.OK);
     }
+
+    /**
+     * ricerca di Postscon voto Medio
+     *
+     * @param postId
+     * @return
+     */
+    @GetMapping("/public/detail/{postId}")
+    public ResponseEntity getPostDetail(@PathVariable long postId) {
+        PostDetailResponse pdr = postService.getPostDetailResponse(postId);
+        if (pdr == null)
+            return new ResponseEntity("Post not found", HttpStatus.NOT_FOUND);
+        return new ResponseEntity(pdr, HttpStatus.OK);
+    }
+
 }
