@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * post completo: Dettagli del post + avg(Rating) + Commenti
@@ -15,11 +16,23 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostDetailResponse {
+
     private long id;
     private String title;
     private String content;
     private String image;
-    private LocalDateTime;
+    private LocalDateTime updatedAt;
     private String username; // author
     private double average;
+    private List<CommentResponse> comments;
+
+    public PostDetailResponse(long id, String title, String content, String image, LocalDateTime updatedAt, String username, double average) {
+        this.id = id;
+        this.title = title;
+        this.content = content;
+        this.image = image;
+        this.updatedAt = updatedAt;
+        this.username = username;
+        this.average = average;
+    }
 }

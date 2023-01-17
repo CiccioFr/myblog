@@ -20,6 +20,12 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     Optional<Post> findByIdAndPublishedTrue(long id);
 
+    // SQL Vista Logica
+    // Query da logical view (vista logica settata in data.sql)
+    // con Hibernate si possono creare, ma necessitano dell'annotation @IMMUTABLE
+    @Query(value = "SELECT * FROM visible_posts", nativeQuery = true)
+    List<Post> getPublishedPosts();
+
     /* verifica esistenza title nei tre modi */
     // viene restituito:
     // - la stringa del titolo se esiste
@@ -69,18 +75,19 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "p.updatedAt) " +
             "FROM Post p " +
             "WHERE p.published = true " +
-            "AND p.title LIKE :keyword OR p.content LIKE :keyword " +
-            "ORDER BY p.updatedAt DESC",
+            "AND p.title LIKE :keyword OR p.content LIKE :keyword ",
+            /* + "ORDER BY p.updatedAt DESC",*/
             // page ha 2 metodi ma non riesce a calcolarsi il nr di elementi (la size)
             countQuery = "SELECT COUNT(p) from Post p WHERE p.published=true AND p.title LIKE :keyword OR p.content LIKE :keyword")
     Page<PostSearchResponse> getPostSearchResponsePaged(Pageable pageable, @Param("keyword") String keyword);
 
     @Query(value = "SELECT new it.cgmconsulting.myblog.payload.response.PostSearchResponse(" +
             // i campi devono corrispondere al costruttore
+            // ricerca Slow Query - Compito dell DB-Administrator
             "p.id, " +
             "p.title, " +
             "p.content, " +
-            "p.image," +
+            ":imagePath || p.image, " +
             "p.updatedAt, " +
             "p.author.username, " +
             //"AVG(voto.rate)) AS average " +
@@ -88,5 +95,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "FROM Post p " +
             //"LEFT JOIN Rating voto ON p.id = voto.ratingId.post.id " +
             "WHERE p.published = true AND p.id = :id")
-    PostDetailResponse getPostDetailResponse(@Param("id") long id);
+    PostDetailResponse getPostDetailResponse(@Param("id") long id, @Param("imagePath") String imagePath);
 }

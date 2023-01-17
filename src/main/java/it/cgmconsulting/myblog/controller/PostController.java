@@ -4,12 +4,14 @@ import it.cgmconsulting.myblog.entity.Category;
 import it.cgmconsulting.myblog.entity.Post;
 import it.cgmconsulting.myblog.entity.User;
 import it.cgmconsulting.myblog.payload.request.PostRequest;
+import it.cgmconsulting.myblog.payload.response.CommentResponse;
 import it.cgmconsulting.myblog.payload.response.PostBoxResponse;
 import it.cgmconsulting.myblog.payload.response.PostDetailResponse;
 import it.cgmconsulting.myblog.payload.response.PostSearchResponse;
 import it.cgmconsulting.myblog.security.CurrentUser;
 import it.cgmconsulting.myblog.security.UserPrincipal;
 import it.cgmconsulting.myblog.service.CategoryService;
+import it.cgmconsulting.myblog.service.CommentService;
 import it.cgmconsulting.myblog.service.FileService;
 import it.cgmconsulting.myblog.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,6 +32,7 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("post")
+@Validated
 public class PostController {
 
     @Autowired
@@ -37,6 +41,8 @@ public class PostController {
     CategoryService categoryService;
     @Autowired
     FileService fileService;
+    @Autowired
+    CommentService commentService;
 
     // recupero info per immagine del Post dal application.yaml
     @Value("${post.size}")
@@ -238,10 +244,15 @@ public class PostController {
      * @return
      */
     @GetMapping("/public/detail/{postId}")
-    public ResponseEntity getPostDetail(@PathVariable long postId) {
+    public ResponseEntity getPostDetail(@PathVariable long postId){
         PostDetailResponse pdr = postService.getPostDetailResponse(postId);
-        if (pdr == null)
+
+        if(pdr == null)
             return new ResponseEntity("Post not found", HttpStatus.NOT_FOUND);
+
+        List<CommentResponse> comments = commentService.getComments(postId);
+        pdr.setComments(comments);
+
         return new ResponseEntity(pdr, HttpStatus.OK);
     }
 

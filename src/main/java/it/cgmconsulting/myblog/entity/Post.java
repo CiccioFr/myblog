@@ -60,6 +60,10 @@ public class Post extends CreationUpdate{
         this.author = author;
     }
 
+    public Post(long id) {
+        this.id = id;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

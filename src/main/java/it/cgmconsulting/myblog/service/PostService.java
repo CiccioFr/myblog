@@ -68,24 +68,24 @@ public class PostService {
 
     // TODO da completare lunedì
     public List<PostSearchResponse> getPostSearchResponsePaged(
-            int pageNumberStart, // numero di pagina da cui partire
+            int pageNumber, // numero di pagina da cui partire
             int pageSize,       // numero degli elementi per pagina
             String direction,   // ASC or DESC
             String sortBy,      // la colonna su cui effettuare l'ordinamento
             String keyword
     ) {
-        Pageable pageable = PageRequest.of(pageNumberStart, pageSize, Sort.Direction.valueOf(direction.toUpperCase()), sortBy);
-        Page<PostSearchResponse> pageResult = postRepository.getPostSearchResponsePaged(pageable, "%" + keyword + "%");
-        if (pageResult.hasContent()) {
-            // List<PostSearchResponse> list = pageResult
-        } else {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.Direction.valueOf(direction.toUpperCase()), sortBy);
+        Page<PostSearchResponse> pageResult = postRepository.getPostSearchResponsePaged(pageable, "%"+keyword+"%");
+        if(pageResult.hasContent()){
+            List<PostSearchResponse> list = pageResult.getContent();
+            return list;
+        }else{
             return new ArrayList<PostSearchResponse>();
         }
-        return null;
     }
 
     public PostDetailResponse getPostDetailResponse(long postId){
-        return postRepository.getPostDetailResponse(postId);
+        return postRepository.getPostDetailResponse(postId, imagePath);
     }
 
 }
