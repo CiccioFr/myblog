@@ -1,0 +1,21 @@
+2022-12-19 11:05:42,315 INFO org.springframework.boot.StartupInfoLogger [main] Starting MyblogApplication using Java 17.0.2 on LAPTOP-R9SGQSD3 with PID 18996 (C:\Users\Fra\Dropbox\CGM Progetti\myblog\target\classes started by Fra in C:\Users\Fra\Dropbox\CGM Progetti\myblog)
+2022-12-19 11:05:42,319 INFO org.springframework.boot.SpringApplication [main] No active profile set, falling back to 1 default profile: "default"
+2022-12-19 11:05:43,246 INFO org.springframework.data.repository.config.RepositoryConfigurationDelegate [main] Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2022-12-19 11:05:43,350 INFO org.springframework.data.repository.config.RepositoryConfigurationDelegate [main] Finished Spring Data repository scanning in 90 ms. Found 3 JPA repository interfaces.
+2022-12-19 11:05:44,039 INFO org.springframework.boot.web.embedded.tomcat.TomcatWebServer [main] Tomcat initialized with port(s): 8083 (http)
+2022-12-19 11:05:44,050 INFO org.apache.juli.logging.DirectJDKLog [main] Initializing ProtocolHandler ["http-nio-8083"]
+2022-12-19 11:05:44,050 INFO org.apache.juli.logging.DirectJDKLog [main] Starting service [Tomcat]
+2022-12-19 11:05:44,051 INFO org.apache.juli.logging.DirectJDKLog [main] Starting Servlet engine: [Apache Tomcat/9.0.69]
+2022-12-19 11:05:44,169 INFO org.apache.juli.logging.DirectJDKLog [main] Initializing Spring embedded WebApplicationContext
+2022-12-19 11:05:44,169 INFO org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext [main] Root WebApplicationContext: initialization completed in 1790 ms
+2022-12-19 11:05:44,691 INFO com.zaxxer.hikari.HikariDataSource [main] HikariPool-1 - Starting...
+2022-12-19 11:05:44,864 INFO com.zaxxer.hikari.HikariDataSource [main] HikariPool-1 - Start completed.
+2022-12-19 11:05:45,900 INFO org.springframework.orm.jpa.AbstractEntityManagerFactoryBean [main] Initialized JPA EntityManagerFactory for persistence unit 'default'
+2022-12-19 11:05:46,015 DEBUG org.hibernate.stat.internal.StatisticsInitiator [main] Statistics initialized [enabled=false]
+2022-12-19 11:05:46,924 INFO org.springframework.security.web.DefaultSecurityFilterChain [main] Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@b53ce18, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@2a666c8e, org.springframework.security.web.context.SecurityContextPersistenceFilter@a238a8e, org.springframework.security.web.header.HeaderWriterFilter@5693d1d2, org.springframework.web.filter.CorsFilter@18adc20a, org.springframework.security.web.authentication.logout.LogoutFilter@7a7f2247, it.cgmconsulting.myblog.security.JwtAuthenticationFilter@434b2e0c, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@7fcfe065, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@7d2baa56, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@7e7987b8, org.springframework.security.web.session.SessionManagementFilter@303db609, org.springframework.security.web.access.ExceptionTranslationFilter@411ae0d7, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@75d95b67]
+2022-12-19 11:05:47,199 INFO org.apache.juli.logging.DirectJDKLog [main] Starting ProtocolHandler ["http-nio-8083"]
+2022-12-19 11:05:47,230 INFO org.springframework.boot.web.embedded.tomcat.TomcatWebServer [main] Tomcat started on port(s): 8083 (http) with context path ''
+2022-12-19 11:05:47,244 INFO org.springframework.boot.StartupInfoLogger [main] Started MyblogApplication in 5.502 seconds (JVM running for 7.3)
+2022-12-19 11:09:02,472 INFO org.springframework.orm.jpa.AbstractEntityManagerFactoryBean [SpringApplicationShutdownHook] Closing JPA EntityManagerFactory for persistence unit 'default'
+2022-12-19 11:09:02,476 INFO com.zaxxer.hikari.HikariDataSource [SpringApplicationShutdownHook] HikariPool-1 - Shutdown initiated...
+2022-12-19 11:09:02,495 INFO com.zaxxer.hikari.HikariDataSource [SpringApplicationShutdownHook] HikariPool-1 - Shutdown completed.
