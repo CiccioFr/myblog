@@ -46,9 +46,14 @@ public class ReasonService {
             msg = "New reason added";
         } else {    // aggiornamento della reason trovata
             if (rh.getSeverity() != request.getSeverity()) {
-                rh.setEndDate(LocalDate.from(request.getStartDate()).minus(1, ChronoUnit.DAYS));
-                save(new ReasonHistory(new ReasonHistoryId(rh.getReasonHistoryId().getReason(), LocalDate.from(request.getStartDate())), request.getSeverity()));
-                msg = "Reason" + request.getReason() + " has been updated";
+                if ((rh.getEndDate() != null && LocalDate.from(request.getStartDate()).isAfter(rh.getEndDate())) ||
+                        (rh.getEndDate() == null && LocalDate.from(request.getStartDate()).isAfter(rh.getReasonHistoryId().getStartDate()))) {
+                    rh.setEndDate(LocalDate.from(request.getStartDate()).minus(1, ChronoUnit.DAYS));
+                    save(new ReasonHistory(new ReasonHistoryId(rh.getReasonHistoryId().getReason(), LocalDate.from(request.getStartDate())), request.getSeverity()));
+                    msg = "Reason" + request.getReason() + " has been updated";
+                } else{
+                    msg = "invalid start date";
+                }
             } else {
                 msg = "Same severity: nothing to update";
             }
