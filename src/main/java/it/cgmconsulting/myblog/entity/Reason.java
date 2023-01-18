@@ -1,11 +1,11 @@
 package it.cgmconsulting.myblog.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.util.Objects;
 
 /**
@@ -15,31 +15,12 @@ import java.util.Objects;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Reason {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-
-    @Column(nullable = false, length = 30)
-    private String reason;
-
-    /**
-     * corrisponde al nr di gg di ban
-     * se il ban è permanente, severity = 36500
-     */
-    private int severity;
-
-    @Column(nullable = false)
-    private LocalDate startDate;
-
-    private LocalDate endDate;
-
-    public Reason(String reason, int severity, LocalDate startDate) {
-        this.reason = reason;
-        this.severity = severity;
-        this.startDate = startDate;
-    }
+    @Column(length = 30)
+    private String id;
 
     @Override
     public boolean equals(Object o) {

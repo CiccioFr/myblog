@@ -22,11 +22,11 @@ public class Reporting extends CreationUpdate {
     private ReportingId reportingId;
 
     @ManyToOne
-    @JoinColumn(name = "reason_id")
+    @JoinColumn(name = "reason_id", nullable = false)
     private Reason reason;
 
     @ManyToOne
-    @JoinColumn(name = "reporter")
+    @JoinColumn(name = "reporter", nullable = false)
     private User reporter;
 
     @Enumerated(EnumType.STRING)
