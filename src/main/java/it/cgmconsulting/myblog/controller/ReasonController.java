@@ -20,12 +20,13 @@ public class ReasonController {
 
     /**
      * Salvataggio delle Reason
+     *
      * @param request
      * @return
      */
     @PutMapping
     @PreAuthorize("hasRole('ROLE_MODERATOR')")
-    public ResponseEntity<?> saveUpdateReason(@RequestBody @Valid ReasonRequest request){
+    public ResponseEntity<?> saveUpdateReason(@RequestBody @Valid ReasonRequest request) {
         return new ResponseEntity(reasonService.save(request), HttpStatus.OK);
     }
 
@@ -35,12 +36,14 @@ public class ReasonController {
 
     /**
      * Elenco delle Reason attive
+     *
      * @return
      */
     @GetMapping
     @PreAuthorize("hasRole('ROLE_READER')")
-    public ResponseEntity<List<String>> getNotExpiredReason(){
+    public ResponseEntity<List<String>> getNotExpiredReason() {
         // La chiamata recupera tutte le reason in corso di validità, ovvero quelle con endDate settato a null
+        // Todo
         return new ResponseEntity(reasonService.getNotExpiredReason(), HttpStatus.OK);
     }
 

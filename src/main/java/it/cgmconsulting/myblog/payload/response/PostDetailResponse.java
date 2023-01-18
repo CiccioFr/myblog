@@ -30,7 +30,7 @@ public class PostDetailResponse {
     private String username; // author
     private double average;
     // inizializzioamo  a vuoto : meglio che se per qualche errore arriva a front end un null
-    private List<CommentResponse> comments = new ArrayList<>();
+    private List<CommentResponse> comments = new ArrayList();
     private Set<String> categories = new HashSet<String>();
 
     public PostDetailResponse(long id, String title, String content, String image, LocalDateTime updatedAt, String username, double average) {

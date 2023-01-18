@@ -16,15 +16,14 @@ import java.util.List;
 
 @Service
 public class ReasonService {
-    @Autowired
-    ReasonService reasonService;
+
     @Autowired
     ReasonHistoryRepository reasonHistoryRepository;
     @Autowired
     ReasonRepository reasonRepository;
 
     /**
-     * Salvataggio/Update di una reason
+     * Salvataggio/Update di una reason (motivazione di Ban)
      *
      * @param request equivalente a String reason, int severity, LocalDate startDate
      */
@@ -43,22 +42,22 @@ public class ReasonService {
         ReasonHistory rh = reasonHistoryRepository.getReasonHistoryByReason(request.getReason());
         if (rh == null) {    // inserimento nuova reason
             Reason r = reasonRepository.save(new Reason(request.getReason()));
-            save(new ReasonHistory(new ReasonHistoryId(r, LocalDate.from(request.getStartDate())), request.getSeverity()));
+            save(new ReasonHistory(new ReasonHistoryId(r, request.getStartDate()), request.getSeverity()));
             msg = "New reason added";
-        } else {    // aggiornamento della reason trovata
+        } else { // aggiornamento della reason trovata
             if (rh.getSeverity() != request.getSeverity()) {
                 if ((rh.getEndDate() != null && LocalDate.from(request.getStartDate()).isAfter(rh.getEndDate())) ||
                         (rh.getEndDate() == null && LocalDate.from(request.getStartDate()).isAfter(rh.getReasonHistoryId().getStartDate()))) {
                     rh.setEndDate(LocalDate.from(request.getStartDate()).minus(1, ChronoUnit.DAYS));
-                    save(new ReasonHistory(new ReasonHistoryId(rh.getReasonHistoryId().getReason(),
-                            LocalDate.from(request.getStartDate())), request.getSeverity()));
-                    msg = "Reason" + request.getReason() + " has been updated";
-                } else{
-                    msg = "invalid start date";
+                    save(new ReasonHistory(new ReasonHistoryId(rh.getReasonHistoryId().getReason(), request.getStartDate()), request.getSeverity()));
+                    msg = "Reason " + request.getReason() + " has been updated";
+                } else {
+                    msg = "Invalid start date";
                 }
             } else {
                 msg = "Same severity: nothing to update";
             }
+
         }
         return msg;
     }
@@ -69,9 +68,10 @@ public class ReasonService {
 
     /**
      * Ricerca in DB di tutte le Reason attive
+     *
      * @return
      */
-    public List<String> getNotExpiredReason(){
-        return reasonHistoryRepository.findByEndDateNull();
+    public List<String> getNotExpiredReason() {
+        return reasonHistoryRepository.getReasonHistoryByEndDateIsNull();
     }
 }

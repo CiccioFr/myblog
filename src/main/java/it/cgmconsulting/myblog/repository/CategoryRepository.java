@@ -63,11 +63,12 @@ public interface CategoryRepository extends JpaRepository<Category, String> {
             "INNER JOIN category c ON c.category_name=pc.category_name " +
             "WHERE c.visible=true  " +
             "AND pc.post_id = :postId", nativeQuery = true)
-    Set<String> getCategoriesNameByPost2(@Param("postId") long id);
+    Set<String> getCategoriesNameByPost(@Param("postId") long id);
     */
 
     @Query(value = "SELECT cs.categoryName " +
             "FROM Post p " +
-            "LEFT JOIN p.categories cs WHERE p.id = :postId AND cs.visible = true")
+            "LEFT JOIN p.categories cs " +
+            "WHERE p.id = :postId AND cs.visible = true")
     Set<String> getCategoriesNameByPost(@Param("postId") long id);
 }
