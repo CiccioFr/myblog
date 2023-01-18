@@ -253,6 +253,9 @@ public class PostController {
         List<CommentResponse> comments = commentService.getComments(postId);
         pdr.setComments(comments);
 
+        Set<String> categories = categoryService.getCategoriesNameByPost(postId);
+        pdr.setCategories(categories);
+
         return new ResponseEntity(pdr, HttpStatus.OK);
     }
 

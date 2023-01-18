@@ -48,4 +48,8 @@ public class CategoryService {
         return categoryRepository.findByVisibleTrueAndCategoryNameIn(categories);
     }
 
+    // TODO verificare
+    public Set<String> getCategoriesNameByPost(long id){
+        return categoryRepository.getCategoriesNameByPost(id);
+    }
 }
