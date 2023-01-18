@@ -9,6 +9,7 @@ import it.cgmconsulting.myblog.repository.ReasonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
@@ -26,7 +27,8 @@ public class ReasonService {
      *
      * @param request che equivale a String reason, int severity, LocalDate startDate
      */
-    public void save(ReasonRequest request) {
+    @Transactional
+    public String save(ReasonRequest request) {
         // inserimento nuovo reason:
         // a) scrivere record su tabella reason
         // b) scrivere record su tabella reason_history
@@ -36,14 +38,22 @@ public class ReasonService {
         // a) scrivere un nuovo record su reason_history
         // b) settare and_date dell'ultimo record inserito (relativamente alla reason cercata) col giorno prima della start_date
 
+        String msg = "";
         ReasonHistory rh = reasonHistoryRepository.getReasonHistoryByReason(request.getReason());
         if (rh == null) {    // inserimento nuova reason
             Reason r = reasonRepository.save(new Reason(request.getReason()));
             save(new ReasonHistory(new ReasonHistoryId(r, LocalDate.from(request.getStartDate())), request.getSeverity()));
+            msg = "New reason added";
         } else {    // aggiornamento della reason trovata
-            rh.setEndDate(LocalDate.from(request.getStartDate()).minus(1, ChronoUnit.DAYS));
-            save(new ReasonHistory(new ReasonHistoryId(rh.getReasonHistoryId().getReason(), LocalDate.from(request.getStartDate())), request.getSeverity()));
+            if (rh.getSeverity() != request.getSeverity()) {
+                rh.setEndDate(LocalDate.from(request.getStartDate()).minus(1, ChronoUnit.DAYS));
+                save(new ReasonHistory(new ReasonHistoryId(rh.getReasonHistoryId().getReason(), LocalDate.from(request.getStartDate())), request.getSeverity()));
+                msg = "Reason" + request.getReason() + " has been updated";
+            } else {
+                msg = "Same severity: nothing to update";
+            }
         }
+        return msg;
     }
 
     public void save(ReasonHistory rh) {

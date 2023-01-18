@@ -23,7 +23,6 @@ public class ReasonController {
     @PutMapping
     @PreAuthorize("hasRole('ROLE_MODERATOR')")
     public ResponseEntity<?> saveUpdateReason(@RequestBody @Valid ReasonRequest request){
-        reasonService.save(request);
-        return new ResponseEntity("insert o update ok", HttpStatus.OK);
+        return new ResponseEntity(reasonService.save(request), HttpStatus.OK);
     }
 }
