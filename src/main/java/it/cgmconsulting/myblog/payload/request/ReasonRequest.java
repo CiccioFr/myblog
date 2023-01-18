@@ -9,6 +9,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
+/**
+ * Bean di una Reason (motivo del Ban)
+ */
 @Getter
 public class ReasonRequest {
 

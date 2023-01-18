@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 /**
+ * Gestione delle Reason
  * Esempio di storicizzazione di dato
  */
 @Entity

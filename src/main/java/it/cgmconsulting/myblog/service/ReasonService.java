@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 @Service
 public class ReasonService {
@@ -23,9 +24,9 @@ public class ReasonService {
     ReasonRepository reasonRepository;
 
     /**
-     * String reason, int severity, LocalDate startDate
+     * Salvataggio/Update di una reason
      *
-     * @param request che equivale a String reason, int severity, LocalDate startDate
+     * @param request equivalente a String reason, int severity, LocalDate startDate
      */
     @Transactional
     public String save(ReasonRequest request) {
@@ -49,7 +50,8 @@ public class ReasonService {
                 if ((rh.getEndDate() != null && LocalDate.from(request.getStartDate()).isAfter(rh.getEndDate())) ||
                         (rh.getEndDate() == null && LocalDate.from(request.getStartDate()).isAfter(rh.getReasonHistoryId().getStartDate()))) {
                     rh.setEndDate(LocalDate.from(request.getStartDate()).minus(1, ChronoUnit.DAYS));
-                    save(new ReasonHistory(new ReasonHistoryId(rh.getReasonHistoryId().getReason(), LocalDate.from(request.getStartDate())), request.getSeverity()));
+                    save(new ReasonHistory(new ReasonHistoryId(rh.getReasonHistoryId().getReason(),
+                            LocalDate.from(request.getStartDate())), request.getSeverity()));
                     msg = "Reason" + request.getReason() + " has been updated";
                 } else{
                     msg = "invalid start date";
@@ -63,5 +65,13 @@ public class ReasonService {
 
     public void save(ReasonHistory rh) {
         reasonHistoryRepository.save(rh);
+    }
+
+    /**
+     * Ricerca in DB di tutte le Reason attive
+     * @return
+     */
+    public List<String> getNotExpiredReason(){
+        return reasonHistoryRepository.findByEndDateNull();
     }
 }

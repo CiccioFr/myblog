@@ -9,7 +9,8 @@ import javax.persistence.*;
 import java.util.Objects;
 
 /**
- * Esempio di storicizzazione di dato
+ * Entity Reason.
+ * Motivazioni di Ban
  */
 @Entity
 @Getter

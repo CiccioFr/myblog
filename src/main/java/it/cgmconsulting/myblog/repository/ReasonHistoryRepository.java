@@ -2,11 +2,13 @@ package it.cgmconsulting.myblog.repository;
 
 import it.cgmconsulting.myblog.entity.ReasonHistory;
 import it.cgmconsulting.myblog.entity.ReasonHistoryId;
+import it.cgmconsulting.myblog.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -17,4 +19,5 @@ public interface ReasonHistoryRepository extends JpaRepository<ReasonHistory, Re
             "WHERE rh.reason.id = :reason " +
             "ORDER BY rh.start_date DESC LIMIT 1", nativeQuery = true)
     ReasonHistory getReasonHistoryByReason(@Param("reason") String reason);
-}
+
+    List<String> findByReasonId_ReasonAndEndDateNull();}
