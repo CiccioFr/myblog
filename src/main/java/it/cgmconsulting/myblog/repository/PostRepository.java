@@ -81,19 +81,31 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             countQuery = "SELECT COUNT(p) from Post p WHERE p.published=true AND p.title LIKE :keyword OR p.content LIKE :keyword")
     Page<PostSearchResponse> getPostSearchResponsePaged(Pageable pageable, @Param("keyword") String keyword);
 
-    @Query(value = "SELECT new it.cgmconsulting.myblog.payload.response.PostSearchResponse(" +
-            // i campi devono corrispondere al costruttore
-            // ricerca Slow Query - Compito dell DB-Administrator
+    /*    @Query(value = "SELECT new it.cgmconsulting.myblog.payload.response.PostSearchResponse(" +
+                // i campi devono corrispondere al costruttore
+                // ricerca Slow Query - Compito dell DB-Administrator
+                "p.id, " +
+                "p.title, " +
+                "p.content, " +
+                ":imagePath || p.image, " +
+                "p.updatedAt, " +
+                "p.author.username, " +
+                //"AVG(voto.rate)) AS average " +
+                "(SELECT COALESCE(ROUND(AVG(r.rate), 2), 0d) FROM Rating r WHERE r.ratingId.post.id = p.id) AS average) " +
+                "FROM Post p " +
+                //"LEFT JOIN Rating voto ON p.id = voto.ratingId.post.id " +
+                "WHERE p.published = true AND p.id = :id")
+        PostDetailResponse getPostDetailResponse(@Param("id") long id, @Param("imagePath") String imagePath);*/
+    @Query(value = "SELECT new it.cgmconsulting.myblog.payload.response.PostDetailResponse(" +
             "p.id, " +
             "p.title, " +
             "p.content, " +
             ":imagePath || p.image, " +
             "p.updatedAt, " +
             "p.author.username, " +
-            //"AVG(voto.rate)) AS average " +
-            "(SELECT COALESCE(ROUND(AVG(r.rate), 2), 0d) FROM Rate r WHERE r.ratingId.post.id = p.id) AS average) " +
+            "(SELECT COALESCE(ROUND(AVG(r.rate), 2), 0.0) FROM Rating r WHERE r.ratingId.post.id = p.id) AS average) " +
             "FROM Post p " +
-            //"LEFT JOIN Rating voto ON p.id = voto.ratingId.post.id " +
-            "WHERE p.published = true AND p.id = :id")
+            "WHERE p.published = true " +
+            "AND p.id = :id")
     PostDetailResponse getPostDetailResponse(@Param("id") long id, @Param("imagePath") String imagePath);
 }
