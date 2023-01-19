@@ -19,10 +19,15 @@ public interface ReasonHistoryRepository extends JpaRepository<ReasonHistory, Re
     ReasonHistory getReasonHistoryByReason(@Param("reason") String reason);
 
     // TODO lasciate in sospeso a fine lez del 18, da testare l'indomani
+
+    /**
+     * Elenco delle reasons in corso di validità
+     * @return
+     */
     @Query(value = "SELECT rh.reason_id " +
             "FROM reason_history rh " +
-            "WHERE rh.end_date IS NULL", nativeQuery = true)
+            "WHERE rh.end_date IS NULL ORDER BY rh.reason_id ASC", nativeQuery = true)
     List<String> getReasonHistoryByEndDateIsNull();
 
-    // List<String> findByReasonId_ReasonAndEndDateNull();
+    List<ReasonHistory> findByEndDateNull();
 }

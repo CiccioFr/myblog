@@ -66,6 +66,7 @@ public interface CategoryRepository extends JpaRepository<Category, String> {
     Set<String> getCategoriesNameByPost(@Param("postId") long id);
     */
 
+    // qua andava bene anche la INNER
     @Query(value = "SELECT cs.categoryName " +
             "FROM Post p " +
             "LEFT JOIN p.categories cs " +

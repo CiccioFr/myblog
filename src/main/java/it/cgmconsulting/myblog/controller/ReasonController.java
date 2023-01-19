@@ -1,5 +1,6 @@
 package it.cgmconsulting.myblog.controller;
 
+import it.cgmconsulting.myblog.entity.ReasonHistory;
 import it.cgmconsulting.myblog.payload.request.ReasonRequest;
 import it.cgmconsulting.myblog.service.ReasonService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,10 +42,21 @@ public class ReasonController {
      */
     @GetMapping
     @PreAuthorize("hasRole('ROLE_READER')")
-    public ResponseEntity<List<String>> getNotExpiredReason() {
-        // La chiamata recupera tutte le reason in corso di validità, ovvero quelle con endDate settato a null
-        // Todo
-        return new ResponseEntity(reasonService.getNotExpiredReason(), HttpStatus.OK);
+    public ResponseEntity<List<String>> getNotExpiredResaon() {
+        // La chiamata recupera tutte le reason in corso di validità ovvero quelle con endDate settato a null
+        return new ResponseEntity(reasonService.getReasonHistoryByEndDateIsNull(), HttpStatus.OK);
     }
 
+    /**
+     * Elenco delle Reason attive con metodo derivato
+     *
+     * @return
+     */
+    @GetMapping("/valid")
+    @PreAuthorize("hasRole('ROLE_READER')")
+    public ResponseEntity<?> getNotExpiredResaonHistory() {
+        // La chiamata recupera tutte le reason in corso di validità ovvero quelle con endDate settato a null
+        List<ReasonHistory> list = reasonService.findByEndDateNull();
+        return new ResponseEntity(list, HttpStatus.OK);
+    }
 }

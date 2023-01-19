@@ -71,7 +71,11 @@ public class ReasonService {
      *
      * @return
      */
-    public List<String> getNotExpiredReason() {
+    public List<String> getReasonHistoryByEndDateIsNull() {
         return reasonHistoryRepository.getReasonHistoryByEndDateIsNull();
+    }
+
+    public List<ReasonHistory> findByEndDateNull(){
+        return reasonHistoryRepository.findByEndDateNull();
     }
 }
