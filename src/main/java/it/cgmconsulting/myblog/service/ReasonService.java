@@ -75,7 +75,12 @@ public class ReasonService {
         return reasonHistoryRepository.getReasonHistoryByEndDateIsNull();
     }
 
-    public List<ReasonHistory> findByEndDateNull(){
+    public List<ReasonHistory> findByEndDateNull() {
         return reasonHistoryRepository.findByEndDateNull();
+    }
+
+    // todo
+    public Reason getValidReason(String reason) {
+        return reasonHistoryRepository(reason);
     }
 }
