@@ -16,6 +16,7 @@ import it.cgmconsulting.myblog.security.JwtAuthenticationEntryPoint;
 import it.cgmconsulting.myblog.security.JwtAuthenticationFilter;
 
 @Configuration
+// permette di utilizare l'annotation PreAutorized
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 

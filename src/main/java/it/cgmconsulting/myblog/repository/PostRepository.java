@@ -67,6 +67,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "ORDER BY p.updatedAt DESC")
     List<PostSearchResponse> getPostSearchResponse(@Param("keyword") String keyword);
 
+    // Named Native Query -> vedi query dentro entity Post
+    @Query(nativeQuery = true)
+    List<PostSearchResponse> getPostSearchResponseNNQ(@Param("keyword") String keyword);
+
     @Query(value = "SELECT new it.cgmconsulting.myblog.payload.response.PostSearchResponse(" +
             "p.id, " +
             "p.title, " +

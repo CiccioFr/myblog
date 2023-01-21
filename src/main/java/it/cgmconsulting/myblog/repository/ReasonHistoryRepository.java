@@ -19,8 +19,6 @@ public interface ReasonHistoryRepository extends JpaRepository<ReasonHistory, Re
             "ORDER BY rh.start_date DESC LIMIT 1", nativeQuery = true)
     ReasonHistory getReasonHistoryByReason(@Param("reason") String reason);
 
-    // TODO lasciate in sospeso a fine lez del 18, da testare l'indomani
-
     /**
      * Elenco delle reasons in corso di validità
      * @return
@@ -32,7 +30,8 @@ public interface ReasonHistoryRepository extends JpaRepository<ReasonHistory, Re
 
     List<ReasonHistory> findByEndDateNull();
 
-    //todo il contronto tra oggetti funziona solo è stato fatto l'overrider 20-10:40
+    //il contronto tra oggetti (r = rh.reasonHistoryId.reason) funziona solo è stato fatto l'overrider dei metodi (equals) all'interno dell'entità
+    // altrimenti si deve confrontare l'ID (r.id = rh.reasonHistoryId.reason.id)
     @Query(value = "SELECT rh.reasonHistoryId.reason " +
             "FROM ReasonHistory rh " +
             "INNER JOIN Reason r ON r = rh.reasonHistoryId.reason " +

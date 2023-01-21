@@ -218,7 +218,7 @@ public class PostController {
     }
 
     /**
-     * ricerca di Posts con Paginazione
+     * Ricerca di Posts con Paginazione
      *
      * @param keyword
      * @param pageNumber
@@ -238,16 +238,29 @@ public class PostController {
     }
 
     /**
+     * Ricerca di Posts con Paginazione -
+     * metodo uguale a getPostSearchResponse ma query eseguita con sql nativa e @NamedNativeQuery
+     *
+     * @param keyword
+     * @return
+     */
+    @GetMapping("/public/search-nnq")
+    public ResponseEntity getPostSearchResponseNNQ(@RequestParam @NotBlank String keyword) {
+        List<PostSearchResponse> result = postService.getPostSearchResponseNNQ(keyword);
+        return new ResponseEntity(result, HttpStatus.OK);
+    }
+
+    /**
      * ricerca di Postscon voto Medio
      *
      * @param postId
      * @return
      */
     @GetMapping("/public/detail/{postId}")
-    public ResponseEntity getPostDetail(@PathVariable long postId){
+    public ResponseEntity getPostDetail(@PathVariable long postId) {
         PostDetailResponse pdr = postService.getPostDetailResponse(postId);
 
-        if(pdr == null)
+        if (pdr == null)
             return new ResponseEntity("Post not found", HttpStatus.NOT_FOUND);
 
         List<CommentResponse> comments = commentService.getComments(postId);

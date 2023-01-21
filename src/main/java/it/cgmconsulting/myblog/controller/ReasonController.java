@@ -57,6 +57,6 @@ public class ReasonController {
     public ResponseEntity<?> getNotExpiredResaonHistory() {
         // La chiamata recupera tutte le reason in corso di validità ovvero quelle con endDate settato a null
         List<ReasonHistory> list = reasonService.findByEndDateNull();
-        return new ResponseEntity(list, HttpStatus.OK);
+        return new ResponseEntity(list, HttpStatus.OK); // va in errore la trasformazione in json in quanto non riesce a recuperare l'id da Reason, essendo la relazione di tipo LAZY
     }
 }

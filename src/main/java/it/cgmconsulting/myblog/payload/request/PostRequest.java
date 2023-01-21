@@ -8,6 +8,7 @@ import javax.validation.constraints.Size;
 @Getter
 public class PostRequest {
 
+    // Annotazioni di validazione
     @NotBlank @Size(max = 100, min = 3)
     private String title;
     @NotBlank @Size(max = 255, min = 15)

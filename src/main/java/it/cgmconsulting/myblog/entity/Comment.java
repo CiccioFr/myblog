@@ -31,6 +31,10 @@ public class Comment extends Creation {
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
+    public Comment(long id) {
+        this.id = id;
+    }
+
     public Comment(String comment, User author, Post post) {
         this.comment = comment;
         this.author = author;

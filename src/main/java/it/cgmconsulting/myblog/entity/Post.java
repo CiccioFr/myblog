@@ -1,11 +1,13 @@
 package it.cgmconsulting.myblog.entity;
 
 import it.cgmconsulting.myblog.entity.common.CreationUpdate;
+import it.cgmconsulting.myblog.payload.response.PostSearchResponse;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Entity
@@ -14,7 +16,30 @@ import java.util.*;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Post extends CreationUpdate{
+@NamedNativeQuery(
+        name = "Post.getPostSearchResponseNNQ",
+        query = "SELECT p.id, p.title, p.image, u.username, p.updated_at " +
+                "FROM post p, user u " +
+                "WHERE p.published=true " +
+                "AND p.author = u.id " +
+                "AND p.title LIKE :keyword OR p.content LIKE :keyword " +
+                "ORDER BY p.updated_at",
+        resultSetMapping = "miaQuery"
+)
+@SqlResultSetMapping(
+        name = "miaQuery",
+        classes = @ConstructorResult(
+                targetClass = PostSearchResponse.class,
+                columns = {
+                        @ColumnResult(name = "id", type = Long.class),
+                        @ColumnResult(name = "title", type = String.class),
+                        @ColumnResult(name = "image", type = String.class),
+                        @ColumnResult(name = "username", type = String.class),
+                        @ColumnResult(name = "updated_at", type = LocalDateTime.class)
+                }
+        )
+)
+public class Post extends CreationUpdate {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.Objects;
 
 /**
@@ -31,7 +30,7 @@ public class Reporting extends CreationUpdate {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 18)
-    private ReportingStatus staus = ReportingStatus.OPEN;
+    private ReportingStatus status = ReportingStatus.OPEN;
 
     public Reporting(ReportingId reportingId, Reason reason, User reporter) {
         this.reportingId = reportingId;

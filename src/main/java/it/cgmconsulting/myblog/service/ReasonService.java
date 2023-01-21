@@ -81,6 +81,6 @@ public class ReasonService {
 
     // todo
     public Reason getValidReason(String reason) {
-        return reasonHistoryRepository(reason);
+        return reasonHistoryRepository.getValidReason(reason);
     }
 }

@@ -20,7 +20,6 @@ import java.util.Optional;
 @Service
 public class PostService {
 
-    // todo manca dichiaraz imagePath
     // @Autowired - iniettiamo il repository
     @Autowired
     PostRepository postRepository;
@@ -54,6 +53,7 @@ public class PostService {
         // il numero di elementi nella lista dei post potrebbe essere inferiore al parametro item
         // quindi per evitare un IndexOutOfBoundsException devo testare anche la dimensione della mia lista
         while (i < item && i < postBoxes.size()) {
+            // aggiungo al nome file dell'immagine anche il path prendendone il valore dall'application.yml
             PostBoxResponse b = new PostBoxResponse(postBoxes.get(i).getId(), postBoxes.get(i).getTitle(),
                     imagePath + postBoxes.get(i).getImage());
             list.add(b);
@@ -66,7 +66,10 @@ public class PostService {
         return postRepository.getPostSearchResponse("%" + keyword + "%");
     }
 
-    // TODO da completare lunedì
+    public List<PostSearchResponse> getPostSearchResponseNNQ(String keyword) {
+        return postRepository.getPostSearchResponseNNQ("%" + keyword + "%");
+    }
+
     public List<PostSearchResponse> getPostSearchResponsePaged(
             int pageNumber, // numero di pagina da cui partire
             int pageSize,       // numero degli elementi per pagina
@@ -75,16 +78,16 @@ public class PostService {
             String keyword
     ) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.Direction.valueOf(direction.toUpperCase()), sortBy);
-        Page<PostSearchResponse> pageResult = postRepository.getPostSearchResponsePaged(pageable, "%"+keyword+"%");
-        if(pageResult.hasContent()){
+        Page<PostSearchResponse> pageResult = postRepository.getPostSearchResponsePaged(pageable, "%" + keyword + "%");
+        if (pageResult.hasContent()) {
             List<PostSearchResponse> list = pageResult.getContent();
             return list;
-        }else{
+        } else {
             return new ArrayList<PostSearchResponse>();
         }
     }
 
-    public PostDetailResponse getPostDetailResponse(long postId){
+    public PostDetailResponse getPostDetailResponse(long postId) {
         return postRepository.getPostDetailResponse(postId, imagePath);
     }
 
