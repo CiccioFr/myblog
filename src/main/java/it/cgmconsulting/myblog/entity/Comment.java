@@ -31,6 +31,8 @@ public class Comment extends Creation {
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
+    private  boolean censored = false;
+
     public Comment(long id) {
         this.id = id;
     }

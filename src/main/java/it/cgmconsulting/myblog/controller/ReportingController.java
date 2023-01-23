@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
@@ -78,18 +79,17 @@ public class ReportingController {
      *
      * @return
      */
-    @PutMapping("/{commentId}/{newStatus}")
+    @PutMapping("/{commentId}/{newStatus}/{reason}")
     @PreAuthorize("hasRole('ROLE_MODERATOR')")
-    public ResponseEntity<?> update(@PathVariable long commentId, @PathVariable String newStatus) {
+    @Transactional
+    public ResponseEntity<?> update(@PathVariable long commentId, @PathVariable String newStatus, @PathVariable String reason) {
         // Cambio Status in quest'ordine: Da OPEN a in_progress a chiuso (3 stati) -> non si può tornare indietro
         // Qualora la segnalazione venga chiusa con PERMABAN o CLOSED_WITH_BAN, l'utente va disabilitato ed il commento censurato
         Optional<Reporting> rep = reportingService.findByReportingId(new ReportingId(new Comment(commentId)));
         if (rep.isEmpty())
             return new ResponseEntity<>("Reporting not found", HttpStatus.NOT_FOUND);
 
-        reportingService.update(rep.get(), newStatus);
-
-        return null;
+        return reportingService.update(rep.get(), newStatus, reason);
     }
 
 }

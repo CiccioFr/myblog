@@ -1,13 +1,15 @@
 package it.cgmconsulting.myblog.repository;
 
-import java.util.Optional;
-
 import it.cgmconsulting.myblog.entity.User;
 import it.cgmconsulting.myblog.payload.response.UserMe;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import javax.transaction.Transactional;
+import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -29,6 +31,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     // risultato della query restituisce un qualcosa che no è mai un null
     Optional<User> findByUsername(String username);
+
     Optional<User> findByUsernameAndEnabledTrue(String username);
 
     Boolean existsByUsername(String username);
@@ -48,4 +51,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "WHERE u.id = :id"
     )
     UserMe getMe(@Param("id") long id); //quando devo passare parametri, li annoto con l'annotation @Param
+
+    // se volessi anare in update su un .. specifico 9.34
+    //tutte le in sert o update, senza .. la query deve essere annotata con @Modifying @Transactional
+    @Modifying // todo
+    @Transactional
+    @Query(value = "UPDATE user SET enable = false, updated_at = CURRENT_TIMESTAMP WHERE id = :userId", nativeQuery = true)
+    void disadleUser(@Param("userId") long userId);
 }

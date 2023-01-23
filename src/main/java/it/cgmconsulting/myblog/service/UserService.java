@@ -61,6 +61,11 @@ public class UserService {
         return userRepository.getMe(id);
     }
 
+    // todo
+    void disableUser(long userId){
+
+    }
+
     // ************ GENERATORE RANDOM DI PASSWORD ************ //
     Random random = new SecureRandom();
 

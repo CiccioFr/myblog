@@ -28,7 +28,11 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     @Query(value = "SELECT new it.cgmconsulting.myblog.payload.response.CommentResponse( " +
             "c.id," +
-            "c.comment," +
+            //"c.comment," +
+            "CASE " +
+            "    WHEN c.censored = false THEN c.comment" +
+            "    ELSE 'censored Comment'" +
+            "END, " +
             "c.createdAt," +
             "c.author.username) " +
             "FROM Comment c " +
