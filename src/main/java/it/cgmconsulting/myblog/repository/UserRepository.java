@@ -72,4 +72,26 @@ public interface UserRepository extends JpaRepository<User, Long> {
     )
     int getSeverity(@Param("userId") long userId);
 
+    @Query(value = "SELECT new it.cgmconsulting.myblog.payload.response.XlsAuthorResponse("
+            + "u.id, "
+            + "u.username, "
+            + "(SELECT COUNT(p.id) from Post p WHERE u=p.author) AS writtenPosts, "
+            + "(SELECT COALESCE(ROUND(AVG(r.rate),2), 0) FROM Rating r WHERE r.ratingId.post.author.id=u.id) AS avg "
+            + ") FROM User u "
+            + "INNER JOIN u.authorities a ON a.authorityName='ROLE_EDITOR' "
+    )
+    List<XlsAuthorResponse> getXlsAuthorResponse();
+
+    @Query(value = "SELECT new it.cgmconsulting.myblog.payload.response.XlsReaderResponse(" +
+            "u.id, " +
+            "u.username, " +
+            "(SELECT COUNT(c.id) from Comment c WHERE u=c.author) AS writtenComments, " +
+            "(SELECT COUNT(r) FROM Reporting r WHERE r.reportingId.comment.author.id = u.id " +
+            "AND r.status " +
+            "IN (it.cgmconsulting.myblog.entity.ReportingStatus.PERMABAN, it.cgmconsulting.myblog.entity.ReportingStatus.CLOSED_WITH_BAN)) AS reportingsWithBan," +
+            "u.enabled" +
+            ") FROM User u " +
+            "INNER JOIN u.authorities a ON a.authorityName='ROLE_READER' "
+    )
+    List<XlsReaderResponse> getXlsReaderResponse();
 }
