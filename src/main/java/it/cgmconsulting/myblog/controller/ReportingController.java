@@ -46,7 +46,7 @@ public class ReportingController {
         // verificare che il commento non sia già stato segnalato (altrimenti Hibernate va in UpDate)
         Optional<Reporting> r = reportingService.findByReportingId(new ReportingId(comment.get()));
         if (r.isPresent())
-            new ResponseEntity("Il commento è già stato segnalato", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity("Il commento è già stato segnalato", HttpStatus.BAD_REQUEST);
         // verificare che l'utente segnalante non sia lo stesso autore del commento
         if (comment.get().getAuthor().getId() == userPrincipal.getId())
             return new ResponseEntity<String>("You cannot send a report of this comment", HttpStatus.FORBIDDEN);
