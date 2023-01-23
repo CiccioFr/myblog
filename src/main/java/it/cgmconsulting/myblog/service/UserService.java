@@ -75,12 +75,12 @@ public class UserService {
         int severity = getSeverity(user.getId());
         // sommare i giorni di Ban (ovvero la severity) al updatedAt dello user
         LocalDateTime endOfBan = updatedAt.plusDays(severity);
-        // Se la somma dei giorni è maggiore alla data attuale, il ban è scaduto e riabilito l'utente
+        // Se la somma dei giorni è maggiore rispetto alla data attuale, il ban è scaduto e riabilito l'utente
         if (LocalDateTime.now().isAfter(endOfBan)){
             user.setEnabled(true);
             return null;
         }
-        // altrimenti restituisco all'utente il mesaggio "Sei bannato sino al " + data scadenza Ban
+        // altrimenti restituisco all'utente il messaggio "Sei bannato sino al " + data scadenza Ban
         return "You are Banned until " + endOfBan;
     }
 

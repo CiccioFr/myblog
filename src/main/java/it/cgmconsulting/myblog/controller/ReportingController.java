@@ -47,15 +47,18 @@ public class ReportingController {
         Optional<Reporting> r = reportingService.findByReportingId(new ReportingId(comment.get()));
         if (r.isPresent())
             return new ResponseEntity("Il commento è già stato segnalato", HttpStatus.BAD_REQUEST);
+
         // verificare che l'utente segnalante non sia lo stesso autore del commento
         if (comment.get().getAuthor().getId() == userPrincipal.getId())
             return new ResponseEntity<String>("You cannot send a report of this comment", HttpStatus.FORBIDDEN);
+
         // reuperare la reason
         // capire toUpperCase(Locale.ROOT) suggerito dall'IDE
         String reason = request.getReason().trim().toUpperCase();
         Reason rs = reasonService.getValidReason(reason);
         if (rs == null)
             return new ResponseEntity<String>("Reason not found", HttpStatus.NOT_FOUND);
+
         // istanziare un Reporting e salvarlo
         Reporting reporting = new Reporting(new ReportingId(comment.get()), rs, new User(userPrincipal.getId()));
         reportingService.save(reporting);
@@ -75,7 +78,7 @@ public class ReportingController {
     }
 
     /**
-     * Il Moderatore puà aggiornare una segnalazione andandone a modificare Status e/o reason
+     * Il Moderatore puà aggiornare una segnalazione andandone a modificare Status e/o reason (motivazione)
      *
      * @return
      */

@@ -65,6 +65,7 @@ public class AuthController {
         Optional<User> u = userService.findByUsernameOrEmail(request.getUsernameOrEmail(), request.getUsernameOrEmail());
         if (!u.isPresent())
             return new ResponseEntity<String>("Bad Credentials", HttpStatus.FORBIDDEN);
+
         // check se utente è bannato e se il suo ban è scaduto; se ban scaduto, riabilito user
         String s = null;
         if (!u.get().isEnabled()) {

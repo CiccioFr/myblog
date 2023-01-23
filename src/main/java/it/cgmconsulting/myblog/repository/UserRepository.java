@@ -2,6 +2,8 @@ package it.cgmconsulting.myblog.repository;
 
 import it.cgmconsulting.myblog.entity.User;
 import it.cgmconsulting.myblog.payload.response.UserMe;
+import it.cgmconsulting.myblog.payload.response.XlsAuthorResponse;
+import it.cgmconsulting.myblog.payload.response.XlsReaderResponse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -9,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -52,7 +55,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     )
     UserMe getMe(@Param("id") long id); //quando devo passare parametri, li annoto con l'annotation @Param
 
-    // se volessi anare in update su un .. specifico 9/10.34
+    // se volessi andare in update su un .. specifico 9/10.34
     //tutte le in insert / update, deve essere annotata con @Modifying @Transactional
     @Modifying
     @Transactional
@@ -61,10 +64,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     // recuperare la severity del ban (per auto-riabilitare l'user a login)
     @Query(value = "SELECT rh.severity FROM reporting rep " +
-            "INNER JOIN reason_history rh ON rep.reason_id " +
+            "INNER JOIN reason_history rh ON rep.reason_id = rh.reason_id " +
             "INNER JOIN comment c ON c.id = rep.comment_id " +
             "INNER JOIN user u ON u.id = c.author " +
-            "WHERE ((u.update_at BETWEEN rh.start_date AND rh.end_date) OR (rh.end_date IS NULL)) " +
-            "AND u.id = :userId", nativeQuery = true)
-    public int getSeverity(@Param("userId") long userId);
+            "WHERE ((u.updated_at BETWEEN rh.start_date AND rh.end_date) OR (rh.end_date IS NULL)) " +
+            "AND u.id = :userId", nativeQuery = true
+    )
+    int getSeverity(@Param("userId") long userId);
+
 }

@@ -17,6 +17,7 @@ public interface ReportingRepository extends JpaRepository<Reporting, ReportingI
 
     Optional<Reporting> findByReportingId(ReportingId rId);
 
+    // todo manca un OR nel WHERE
     @Query(value="SELECT new it.cgmconsulting.myblog.payload.response.ReportingResponse(" +
             "r.status, " +
             "r.reportingId.comment.id, " +
@@ -27,7 +28,8 @@ public interface ReportingRepository extends JpaRepository<Reporting, ReportingI
             "r.createdAt) " +
             "FRoM Reporting r " +
             "INNER JOIN ReasonHistory rh ON rh.reasonHistoryId.reason.id = r.reason.id " +
-            "WHERE (rh.endDate Is NULL OR (r.createdAt BETWEEN rh.reasonHistoryId.startDate AND rh.endDate)) " +
+            "WHERE ((rh.endDate IS NULL AND rh.reasonHistoryId.startDate <= CURRENT_TIMESTAMP) " +
+            "   OR (rep.createdAt BETWEEN rh.reasonHistoryId.startDate AND rh.endDate)) " +
             "ORDER BY rh.severity DESC, r.updatedAt DESC")
     List<ReportingResponse> getReportings();
 }
