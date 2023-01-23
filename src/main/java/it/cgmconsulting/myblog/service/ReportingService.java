@@ -36,8 +36,8 @@ public class ReportingService {
         return reportingRepository.getReportings();
     }
 
-    @Transactional
     public ResponseEntity<?> update(Reporting rep, String newStatus, String reason){
+        // verifica dello status
         if(rep.getStatus().equals(ReportingStatus.valueOf(newStatus))) {
             return new ResponseEntity("Status has not been modified", HttpStatus.BAD_REQUEST);
         } else if (rep.getStatus().equals(ReportingStatus.OPEN) && ReportingStatus.valueOf(newStatus).equals(ReportingStatus.IN_PROGRESS)) {
@@ -51,7 +51,6 @@ public class ReportingService {
             rep.setStatus(ReportingStatus.valueOf(newStatus));
             rep.setReason(new Reason(reason));
         }
-//        save(rep);
 
         return new ResponseEntity("Reporting has been modified", HttpStatus.OK);
 

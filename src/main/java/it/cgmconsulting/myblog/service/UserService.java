@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -61,9 +62,26 @@ public class UserService {
         return userRepository.getMe(id);
     }
 
-    // todo
-    void disableUser(long userId){
+    public void disableUser(long userId){
+        userRepository.disadleUser(userId);
+    }
 
+    public int getSeverity(long userId){
+        return userRepository.getSeverity(userId);
+    }
+
+    public String checkBan(User user, LocalDateTime updatedAt){
+        // recuperare la severity del Ban,
+        int severity = getSeverity(user.getId());
+        // sommare i giorni di Ban (ovvero la severity) al updatedAt dello user
+        LocalDateTime endOfBan = updatedAt.plusDays(severity);
+        // Se la somma dei giorni è maggiore alla data attuale, il ban è scaduto e riabilito l'utente
+        if (LocalDateTime.now().isAfter(endOfBan)){
+            user.setEnabled(true);
+            return null;
+        }
+        // altrimenti restituisco all'utente il mesaggio "Sei bannato sino al " + data scadenza Ban
+        return "You are Banned until " + endOfBan;
     }
 
     // ************ GENERATORE RANDOM DI PASSWORD ************ //

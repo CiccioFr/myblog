@@ -52,10 +52,19 @@ public interface UserRepository extends JpaRepository<User, Long> {
     )
     UserMe getMe(@Param("id") long id); //quando devo passare parametri, li annoto con l'annotation @Param
 
-    // se volessi anare in update su un .. specifico 9.34
-    //tutte le in sert o update, senza .. la query deve essere annotata con @Modifying @Transactional
-    @Modifying // todo
+    // se volessi anare in update su un .. specifico 9/10.34
+    //tutte le in insert / update, deve essere annotata con @Modifying @Transactional
+    @Modifying
     @Transactional
     @Query(value = "UPDATE user SET enable = false, updated_at = CURRENT_TIMESTAMP WHERE id = :userId", nativeQuery = true)
     void disadleUser(@Param("userId") long userId);
+
+    // recuperare la severity del ban (per auto-riabilitare l'user a login)
+    @Query(value = "SELECT rh.severity FROM reporting rep " +
+            "INNER JOIN reason_history rh ON rep.reason_id " +
+            "INNER JOIN comment c ON c.id = rep.comment_id " +
+            "INNER JOIN user u ON u.id = c.author " +
+            "WHERE ((u.update_at BETWEEN rh.start_date AND rh.end_date) OR (rh.end_date IS NULL)) " +
+            "AND u.id = :userId", nativeQuery = true)
+    public int getSeverity(@Param("userId") long userId);
 }

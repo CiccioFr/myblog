@@ -65,6 +65,14 @@ public class AuthController {
         Optional<User> u = userService.findByUsernameOrEmail(request.getUsernameOrEmail(), request.getUsernameOrEmail());
         if (!u.isPresent())
             return new ResponseEntity<String>("Bad Credentials", HttpStatus.FORBIDDEN);
+        // check se utente è bannato e se il suo ban è scaduto; se ban scaduto, riabilito user
+        String s = null;
+        if (!u.get().isEnabled()) {
+            s = userService.checkBan(u.get(), u.get().getUpdatedAt());
+            if (s != null)
+                return new ResponseEntity<String>(s, HttpStatus.FORBIDDEN);
+        }
+        //
         if (!passwordEncoder.matches(request.getPassword(), u.get().getPassword()))
             return new ResponseEntity<String>("Bad Credentials", HttpStatus.FORBIDDEN);
 
@@ -139,7 +147,7 @@ public class AuthController {
     /**
      * modifica del ruolo
      *
-     * @param request composta da userId e Set<String> authorities
+     * @param request       composta da userId e Set<String> authorities
      * @param userPrincipal
      * @return
      */
@@ -169,7 +177,6 @@ public class AuthController {
     }
 
     /**
-     *
      * @param confirmCode
      * @return
      */
