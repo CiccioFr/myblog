@@ -29,7 +29,7 @@ public interface ReportingRepository extends JpaRepository<Reporting, ReportingI
             "FRoM Reporting r " +
             "INNER JOIN ReasonHistory rh ON rh.reasonHistoryId.reason.id = r.reason.id " +
             "WHERE ((rh.endDate IS NULL AND rh.reasonHistoryId.startDate <= CURRENT_TIMESTAMP) " +
-            "   OR (rep.createdAt BETWEEN rh.reasonHistoryId.startDate AND rh.endDate)) " +
+            "   OR (r.createdAt BETWEEN rh.reasonHistoryId.startDate AND rh.endDate)) " +
             "ORDER BY rh.severity DESC, r.updatedAt DESC")
     List<ReportingResponse> getReportings();
 }

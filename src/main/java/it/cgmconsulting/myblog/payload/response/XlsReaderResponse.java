@@ -10,7 +10,7 @@ public class XlsReaderResponse {
 
     private long id;
     private String username;
-    private int writtenComment;
-    private int reportingsWithBan;
+    private long writtenComment;
+    private long reportingsWithBan;
     private boolean enabled;
 }

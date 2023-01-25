@@ -66,7 +66,7 @@ public class ReportingController {
         return new ResponseEntity<String>("Report Send", HttpStatus.CREATED);
     }
 
-    @PutMapping
+    @GetMapping
     @PreAuthorize("hasRole('ROLE_MODERATOR')")
     public ResponseEntity<?> getReportings() {
         // cosa deve far vedere la pagina
