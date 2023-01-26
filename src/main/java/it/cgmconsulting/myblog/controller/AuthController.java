@@ -33,8 +33,7 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * @RestController qusta classe serve per la creazione di servizi RESTfull
- * @RequestMapping indica di porre
+ * Classe per la creazione di servizi RESTful
  */
 @RestController
 @RequestMapping("auth") // localhost:{port}/auth/....
@@ -55,9 +54,16 @@ public class AuthController {
     MailService mailService;
 
     /**
-     * @param request
-     * @return
-     * @valid Necessario: valida i dati
+     * Login Utente all'url localhost:{port}/auth/signin
+     * * Verifica:
+     * 1. Se user Esiste
+     * 2. Se user è Abilitato (da Admin)
+     * 3. Se user è Bannato
+     * 4. Se Ban è Scaduto (se si lo riabilita)
+     * 5. permette login e Crea Token
+     *
+     * @param request Bean SigninRequest con usernameOrEmail e password
+     * @return Response con ID UserName Mail Ruolo Token
      */
     @PostMapping("signin") // localhost:{port}/auth/signin
     @Transactional
@@ -66,7 +72,7 @@ public class AuthController {
         if (!u.isPresent())
             return new ResponseEntity<String>("Bad Credentials", HttpStatus.FORBIDDEN);
 
-        // check se utente è bannato e se il suo ban è scaduto; se ban scaduto, riabilito user
+        // check se utente è bannato; se ban scaduto, riabilito user
         String s = null;
         if (!u.get().isEnabled()) {
             s = userService.checkBan(u.get(), u.get().getUpdatedAt());
@@ -86,7 +92,7 @@ public class AuthController {
         // è un oggetto di Spring Security
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        // creazione del Token
+        // creazione Token
         String jwt = JwtTokenProvider.generateToken(authentication);
         // creazione DTO
         // sostanz è una mappatura tra ..

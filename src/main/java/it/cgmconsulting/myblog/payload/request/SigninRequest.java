@@ -5,6 +5,9 @@ import lombok.Getter;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+/**
+ * Bean con usernameOrEmail e password
+ */
 @Getter
 public class SigninRequest {
 
