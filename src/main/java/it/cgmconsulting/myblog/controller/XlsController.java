@@ -39,11 +39,12 @@ public class XlsController {
             // VINCOLI SULL'ORIGINE DEL CHIAMANTE:
             // le chiamate possono arrivare da qualunque IP / un singolo / range IP
             headers.add("Access-Control-Allow-Origin", "*");
-            // unico metodo che permettiamo, get per recuperare
+            // unico metodo che permettiamo, get per recuperare (riceve una risorsa)
             headers.add("Access-Control-Allow-Method", "GET");
             // cont tipe la parte della chash, nel momento della generezaione, non tenerlo in chash,
             // perche potrebbe non essere aggiornato (es il gg dopo)
             // per rivalidare il file e rigenerato un nuovo file
+            // gli header sulla cache ..
             headers.add("Access-Control-Allow-Header", "Content-Type");
             headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
             headers.add("Pragma", "no-cache");
@@ -54,10 +55,10 @@ public class XlsController {
             // la respons di tipo InputStreamResource, che contiene il file
             responseEntity = new ResponseEntity<InputStreamResource>(
                     new InputStreamResource(xlsFile),
-                    headers,
+                    headers, // sono una mappatura
                     HttpStatus.OK
             );
-
+            // ADL MOMENTO CHE STIAMO "SCARICANDO" UN FILE,  stream..
         } catch (Exception ex) {
             responseEntity = new ResponseEntity<InputStreamResource>(
                     new InputStreamResource(null, "Error creating Report"),

@@ -109,7 +109,7 @@ public class AuthController {
      * HttpStatus: il codice
      *
      * @param signUpRequest
-     * @return
+     * @return Response Body e HttpStatus
      */
     @PutMapping("/signup")
     // permette di non avere salvataggi monchi sul DB

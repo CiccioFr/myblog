@@ -53,6 +53,7 @@ public class Post extends CreationUpdate {
 
     // di default userebbe VARCHAR (255)
     // impostare a 64k la dimensione, essendo su DB di tipo "text")
+    // con columnDefinition = "TEXT" impostiamo il tipo di attributo della tabella
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
