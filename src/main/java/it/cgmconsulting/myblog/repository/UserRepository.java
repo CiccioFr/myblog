@@ -3,6 +3,7 @@ package it.cgmconsulting.myblog.repository;
 import it.cgmconsulting.myblog.entity.User;
 import it.cgmconsulting.myblog.payload.response.UserMe;
 import it.cgmconsulting.myblog.payload.response.XlsAuthorResponse;
+import it.cgmconsulting.myblog.payload.response.XlsPostResponse;
 import it.cgmconsulting.myblog.payload.response.XlsReaderResponse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -63,13 +64,23 @@ public interface UserRepository extends JpaRepository<User, Long> {
     void disadleUser(@Param("userId") long userId);
 
     // recuperare la severity del ban (per auto-riabilitare l'user a login)
-    @Query(value = "SELECT rh.severity FROM reporting rep " +
+/*    @Query(value = "SELECT rh.severity FROM reporting rep " +
             "INNER JOIN reason_history rh ON rep.reason_id = rh.reason_id " +
             "INNER JOIN comment c ON c.id = rep.comment_id " +
             "INNER JOIN user u ON u.id = c.author " +
             "WHERE ((u.updated_at BETWEEN rh.start_date AND rh.end_date) OR (rh.end_date IS NULL)) " +
             "AND u.id = :userId", nativeQuery = true
     )
+    int getSeverity(@Param("userId") long userId);*/
+    @Query(value="SELECT MAX(rh.severity) " +
+            "FROM reporting rep " +
+            "INNER JOIN reason_history rh ON rep.reason_id = rh.reason_id " +
+            "INNER JOIN comment c ON c.id = rep.comment_id " +
+            "INNER JOIN user u ON u.id = c.author " +
+            "WHERE ((u.updated_at BETWEEN rh.start_date AND rh.end_date) OR (rh.end_date IS NULL)) " +
+            "AND rep.status IN ('PERMABAN', 'CLOSED_WITH_BAN') " +
+            "AND DATEDIFF(CURRENT_TIMESTAMP, DATE_ADD(rep.updated_at, INTERVAL rh.severity DAY)) < 0 " +
+            "AND u.id = :userId", nativeQuery = true)
     int getSeverity(@Param("userId") long userId);
 
     @Query(value = "SELECT new it.cgmconsulting.myblog.payload.response.XlsAuthorResponse("

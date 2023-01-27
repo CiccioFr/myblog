@@ -4,6 +4,7 @@ import it.cgmconsulting.myblog.entity.Post;
 import it.cgmconsulting.myblog.payload.response.PostBoxResponse;
 import it.cgmconsulting.myblog.payload.response.PostDetailResponse;
 import it.cgmconsulting.myblog.payload.response.PostSearchResponse;
+import it.cgmconsulting.myblog.payload.response.XlsPostResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -112,4 +113,15 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "WHERE p.published = true " +
             "AND p.id = :id")
     PostDetailResponse getPostDetailResponse(@Param("id") long id, @Param("imagePath") String imagePath);
+
+    @Query(value = "SELECT new it.cgmconsulting.myblog.payload.response.XlsPostResponse(" +
+            "p.id, " +
+            "p.title, " +
+            "(SELECT COALESCE(ROUND(AVG(r.rate),2),0) FROM Rating r WHERE r.ratingId.post.id=p.id) AS avg, " +
+            "p.published, " +
+            "u.username " +
+            ") FROM Post p " +
+            "LEFT JOIN User u ON u.id = p.author.id"
+    )
+    List<XlsPostResponse> getXlsPostResponse();
 }
