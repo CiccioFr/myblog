@@ -1,6 +1,5 @@
 package it.cgmconsulting.myblog.payload.response;
 
-import it.cgmconsulting.myblog.entity.Reporting;
 import it.cgmconsulting.myblog.entity.ReportingStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

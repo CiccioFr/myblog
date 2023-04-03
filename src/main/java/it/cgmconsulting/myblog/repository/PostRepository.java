@@ -19,6 +19,7 @@ import java.util.Optional;
 public interface PostRepository extends JpaRepository<Post, Long> {
     // verifichiamo se esiste il titolo richiesto da PostController
 
+    // metodo derivato
     Optional<Post> findByIdAndPublishedTrue(long id);
 
     // SQL Vista Logica
@@ -36,7 +37,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     boolean existsByTitle(String title);
 
     // JPQL - qui si fa una query secca e return string
-    // il parametro che intenfico deve essere identico alla quesry :title
+    // il parametro che identifico deve essere identico alla query :title
     @Query(value = "SELECT p.title FROM Post p WHERE p.title = :title")
     String getTitle(@Param("title") String title);
 
@@ -68,7 +69,13 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "ORDER BY p.updatedAt DESC")
     List<PostSearchResponse> getPostSearchResponse(@Param("keyword") String keyword);
 
-    // Named Native Query -> vedi query dentro entity Post
+    /**
+     * <p> Named Native Query -> </p>
+     * Mappatura nell'Entity (Post) prima della dichiarazione della classe
+     *
+     * @param keyword
+     * @return
+     */
     @Query(nativeQuery = true)
     List<PostSearchResponse> getPostSearchResponseNNQ(@Param("keyword") String keyword);
 
@@ -119,8 +126,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "p.title, " +
             "(SELECT COALESCE(ROUND(AVG(r.rate),2),0) FROM Rating r WHERE r.ratingId.post.id=p.id) AS avg, " +
             "p.published, " +
-            "u.username " +
-            ") FROM Post p " +
+            "u.username) " +
+            "FROM Post p " +
             "LEFT JOIN User u ON u.id = p.author.id"
     )
     List<XlsPostResponse> getXlsPostResponse();

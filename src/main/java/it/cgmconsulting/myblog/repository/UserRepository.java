@@ -3,7 +3,6 @@ package it.cgmconsulting.myblog.repository;
 import it.cgmconsulting.myblog.entity.User;
 import it.cgmconsulting.myblog.payload.response.UserMe;
 import it.cgmconsulting.myblog.payload.response.XlsAuthorResponse;
-import it.cgmconsulting.myblog.payload.response.XlsPostResponse;
 import it.cgmconsulting.myblog.payload.response.XlsReaderResponse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -18,7 +17,7 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    // METODI DERIVATI: restituiscono SOLO entità o collection di entità, oppure primitivi/wrapper
+    // METODI DERIVATI: restituiscono SOLO entità o collection di entità
 
     // uso di yaml  data.jpa.repositories.bootstrap-mode: DEFAULT | DEFERRED | LAZY
     Optional<User> findByEmail(String email);
@@ -86,7 +85,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query(value = "SELECT new it.cgmconsulting.myblog.payload.response.XlsAuthorResponse("
             + "u.id, "
             + "u.username, "
-            + "(SELECT COUNT(p.id) from Post p WHERE u=p.author) AS writtenPosts, "
+            + "(SELECT COUNT(p.id) FROM Post p WHERE u=p.author) AS writtenPosts, "
             + "(SELECT COALESCE(ROUND(AVG(r.rate),2), 0) FROM Rating r WHERE r.ratingId.post.author.id=u.id) AS avg "
             + ") FROM User u "
             + "INNER JOIN u.authorities a ON a.authorityName='ROLE_EDITOR' "

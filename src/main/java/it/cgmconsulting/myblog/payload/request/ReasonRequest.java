@@ -20,7 +20,7 @@ public class ReasonRequest {
     private String reason;
 
     @Min(1)
-    @Max(36500) // ovvero 100 anni è il ban massimo, il che equivale ad un permaBan
+    @Max(36500) // ovvero 36500/60/60/24/365 ~ 100 anni è il ban massimo, il che equivale ad un permaBan
     private int severity;
 
     @NotNull

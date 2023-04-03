@@ -10,7 +10,8 @@ import java.util.Objects;
 
 @Entity
 @Getter
-@Setter @NoArgsConstructor
+@Setter
+@NoArgsConstructor
 public class Comment extends Creation {
 
     @Id
@@ -22,16 +23,16 @@ public class Comment extends Creation {
 
     // nuovo argomento - FetchType: EAGER | LAZY
     // EAGER è di default per tutte le relazioni ..ToOne e porta dietro tutto l'oggetto
+    // LAZY: dobbiamo impostare che porti dietro solo id e non tutto l'oggetto
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author", nullable = false)
-    // dobbiamo impostare che porti dietro solo id e non tutto l'oggetto
     private User author;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
-    private  boolean censored = false;
+    private boolean censored = false;
 
     public Comment(long id) {
         this.id = id;

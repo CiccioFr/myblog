@@ -5,7 +5,6 @@ import it.cgmconsulting.myblog.entity.ReportingId;
 import it.cgmconsulting.myblog.payload.response.ReportingResponse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,6 +14,7 @@ import java.util.Optional;
 @Repository
 public interface ReportingRepository extends JpaRepository<Reporting, ReportingId> {
 
+    // metodo derivato
     Optional<Reporting> findByReportingId(ReportingId rId);
 
     // todo manca un OR nel WHERE

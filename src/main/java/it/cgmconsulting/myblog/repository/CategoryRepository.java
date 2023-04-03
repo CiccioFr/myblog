@@ -16,7 +16,7 @@ public interface CategoryRepository extends JpaRepository<Category, String> {
 
     // JPQL: JavaPersistent Query Language - nome del tutto arbitrario
     // @Query per immettere una query usando la sintassi jpql
-    // - fa riferimento a nome delle classi ed attributi
+    // - fa riferimento a nome delle classi ed attributi Entity
     @Query(value = "SELECT c.categoryName FROM Category c WHERE c.visible=true ORDER BY c.categoryName")
     List<String> getByVisibleTrue();
 

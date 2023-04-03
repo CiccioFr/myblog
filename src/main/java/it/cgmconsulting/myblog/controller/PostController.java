@@ -94,27 +94,27 @@ public class PostController {
                                      @Valid @RequestBody PostRequest request,
                                      @CurrentUser UserPrincipal userPrincipal) {
 
-        Optional<Post> p = postService.findById(postId);
-        if (p.isEmpty())
+        Optional<Post> post = postService.findById(postId);
+        if (post.isEmpty())
             return new ResponseEntity("Post not found", HttpStatus.NOT_FOUND);
 
         // solo chi ha scritto il post può associare le categorie al post stesso
-        if (p.get().getAuthor().getId() != userPrincipal.getId())
+        if (post.get().getAuthor().getId() != userPrincipal.getId())
             return new ResponseEntity("You are not the author of this post.", HttpStatus.FORBIDDEN);
 
         // controllo preventivo sull'unicità del titolo
         if (postService.existsByTitle(request.getTitle()))
             return new ResponseEntity("Title already exists", HttpStatus.BAD_REQUEST);
         else //if (title != null)
-            p.get().setTitle(request.getTitle());
+            post.get().setTitle(request.getTitle());
 
-        if (!p.get().getOverview().equals(request.getOverview()))
-            p.get().setOverview(request.getOverview());
+        if (!post.get().getOverview().equals(request.getOverview()))
+            post.get().setOverview(request.getOverview());
 
-        if (!p.get().getContent().equalsIgnoreCase(request.getContent()))
-            p.get().setContent(request.getContent());
+        if (!post.get().getContent().equalsIgnoreCase(request.getContent()))
+            post.get().setContent(request.getContent());
 
-        p.get().setPublished(false);
+        post.get().setPublished(false);
 
         return new ResponseEntity("Post updated", HttpStatus.OK);
     }
@@ -153,7 +153,7 @@ public class PostController {
     }
 
     /**
-     * Pubblicazione del Post
+     * <p> Pubblicazione del Post </p>
      * L'Admin convalida e rende visibile un Post
      *
      * @param postId
@@ -184,9 +184,8 @@ public class PostController {
     @PreAuthorize("hasRole('ROLE_EDITOR')")
     public ResponseEntity addImage(@PathVariable long postId,
                                    @CurrentUser UserPrincipal userPrincipal,
-                                   // interfaccia di spring, è la rappresentazione del file che viene inviata
-                                   // (in upload) in una request,
-                                   // salva il file in memoria, dopo di che o lo persiste su rete o su DB
+                                   // interfaccia di spring, è la rappresentazione del file che viene inviata (in upload) in una request,
+                                   // salva il file in memoria, dopo di che lo persiste su rete o su DB
                                    @RequestParam MultipartFile file) {
 
         if (!fileService.checkSize(file, size))

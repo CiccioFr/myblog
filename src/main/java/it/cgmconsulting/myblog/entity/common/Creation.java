@@ -16,9 +16,11 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class Creation implements Serializable {
+
     // si valorizzano in automatico
     @CreationTimestamp
     // la data di creazione non può essere aggiornata
     @Column(updatable = false)
     private LocalDateTime createdAt;
 }
+
